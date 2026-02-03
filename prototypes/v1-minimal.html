@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gains - Minimal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000000;
+            --bg-card: #0a0a0a;
+            --bg-elevated: #141414;
+            --border: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #666666;
+            --text-tertiary: #444444;
+            --accent: #0A84FF;
+            --accent-glow: rgba(10, 132, 255, 0.15);
+            --green: #30D158;
+            --orange: #FF9F0A;
+            --red: #FF453A;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 0 20px;
+            padding-bottom: 100px;
+        }
+
+        /* Header */
+        header {
+            padding: 60px 0 40px;
+            text-align: center;
+        }
+
+        .greeting {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--accent-glow);
+            color: var(--accent);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+
+        .streak-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: #2a2a2a;
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-action {
+            font-size: 13px;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .section-action:hover {
+            text-decoration: underline;
+        }
+
+        /* PR Board */
+        .pr-board {
+            margin-bottom: 32px;
+        }
+
+        .pr-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .pr-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pr-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .pr-card:hover {
+            border-color: #2a2a2a;
+            transform: translateY(-2px);
+        }
+
+        .pr-card:hover::before {
+            opacity: 1;
+        }
+
+        .pr-exercise {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .pr-weight {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .pr-weight span {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .pr-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .pr-new {
+            background: var(--green);
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Progress Chart */
+        .progress-section {
+            margin-bottom: 32px;
+        }
+
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .chart-value {
+            font-size: 13px;
+            color: var(--green);
+            font-weight: 500;
+        }
+
+        .chart-placeholder {
+            height: 160px;
+            position: relative;
+        }
+
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-path {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .chart-area {
+            fill: url(#gradient);
+        }
+
+        .chart-grid-line {
+            stroke: var(--border);
+            stroke-width: 1;
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        /* Recent Workouts */
+        .workouts-section {
+            margin-bottom: 32px;
+        }
+
+        .workout-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .workout-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .workout-item:hover {
+            border-color: #2a2a2a;
+            background: var(--bg-elevated);
+        }
+
+        .workout-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .workout-day {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .workout-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .workout-stats {
+            text-align: right;
+        }
+
+        .workout-exercises {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .workout-volume {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+
+        .workout-arrow {
+            color: var(--text-tertiary);
+            margin-left: 12px;
+            font-size: 18px;
+        }
+
+        /* Insights */
+        .insights-section {
+            margin-bottom: 32px;
+        }
+
+        .insight-card {
+            background: linear-gradient(135deg, rgba(10, 132, 255, 0.1), rgba(10, 132, 255, 0.02));
+            border: 1px solid rgba(10, 132, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .insight-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .insight-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .insight-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Volume Ring */
+        .volume-section {
+            margin-bottom: 32px;
+        }
+
+        .volume-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .volume-ring {
+            width: 80px;
+            height: 80px;
+            position: relative;
+        }
+
+        .volume-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .volume-ring-bg {
+            fill: none;
+            stroke: var(--border);
+            stroke-width: 6;
+        }
+
+        .volume-ring-progress {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke-dasharray: 226;
+            stroke-dashoffset: 45;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .volume-ring-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .volume-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .volume-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .volume-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--green);
+            font-weight: 500;
+        }
+
+        /* Footer spacer for mobile nav */
+        .footer-spacer {
+            height: 80px;
+        }
+
+        /* Mobile nav hint */
+        .nav-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 12px 24px;
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-item {
+            color: var(--text-tertiary);
+            font-size: 20px;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 380px) {
+            .stats-row {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 16px 12px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .pr-grid {
+                gap: 8px;
+            }
+
+            .pr-card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <p class="greeting">Good evening</p>
+            <h1 class="title">Steven</h1>
+            <div class="streak-badge">12 day streak</div>
+        </header>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value">4</div>
+                <div class="stat-label">This Week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">23</div>
+                <div class="stat-label">Total PRs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">47</div>
+                <div class="stat-label">Workouts</div>
+            </div>
+        </div>
+
+        <section class="pr-board">
+            <div class="section-header">
+                <h2 class="section-title">Personal Records</h2>
+                <a href="#" class="section-action">View All</a>
+            </div>
+            <div class="pr-grid">
+                <div class="pr-card">
+                    <div class="pr-exercise">Weighted Pull-up</div>
+                    <div class="pr-weight">+50 <span>lbs</span></div>
+                    <div class="pr-meta">
+                        <span class="pr-new">New</span>
+                        <span>3 days ago</span>
+                    </div>
+                </div>
+                <div class="pr-card">
+                    <div class="pr-exercise">Lat Pulldown</div>
+                    <div class="pr-weight">180 <span>lbs</span></div>
+                    <div class="pr-meta">
+                        <span>12 reps</span>
+                    </div>
+                </div>
+                <div class="pr-card">
+                    <div class="pr-exercise">Bulgarian Split Squat</div>
+                    <div class="pr-weight">60 <span>lbs</span></div>
+                    <div class="pr-meta">
+                        <span>8 reps each</span>
+                    </div>
+                </div>
+                <div class="pr-card">
+                    <div class="pr-exercise">Neck Curl</div>
+                    <div class="pr-weight">35 <span>lbs</span></div>
+                    <div class="pr-meta">
+                        <span class="pr-new">New</span>
+                        <span>Today</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="progress-section">
+            <div class="section-header">
+                <h2 class="section-title">Pull-up Progress</h2>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">Weighted Pull-ups</div>
+                    <div class="chart-value">+12% this month</div>
+                </div>
+                <div class="chart-placeholder">
+                    <svg class="chart-svg" viewBox="0 0 400 160" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#0A84FF;stop-opacity:0.3" />
+                                <stop offset="100%" style="stop-color:#0A84FF;stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+                        <line class="chart-grid-line" x1="0" y1="40" x2="400" y2="40" />
+                        <line class="chart-grid-line" x1="0" y1="80" x2="400" y2="80" />
+                        <line class="chart-grid-line" x1="0" y1="120" x2="400" y2="120" />
+                        <path class="chart-area" d="M0,140 L50,130 L100,120 L150,100 L200,90 L250,70 L300,50 L350,40 L400,30 L400,160 L0,160 Z" />
+                        <path class="chart-path" d="M0,140 L50,130 L100,120 L150,100 L200,90 L250,70 L300,50 L350,40 L400,30" />
+                    </svg>
+                </div>
+                <div class="chart-labels">
+                    <span>Oct</span>
+                    <span>Nov</span>
+                    <span>Dec</span>
+                    <span>Jan</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="volume-section">
+            <div class="section-header">
+                <h2 class="section-title">Weekly Volume</h2>
+            </div>
+            <div class="volume-card">
+                <div class="volume-ring">
+                    <svg viewBox="0 0 80 80">
+                        <circle class="volume-ring-bg" cx="40" cy="40" r="36" />
+                        <circle class="volume-ring-progress" cx="40" cy="40" r="36" />
+                    </svg>
+                    <div class="volume-ring-text">80%</div>
+                </div>
+                <div class="volume-info">
+                    <h3>32,450 lbs</h3>
+                    <p>of 40,000 lb weekly goal</p>
+                    <div class="volume-trend">
+                        <span>↑</span> 8% vs last week
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="workouts-section">
+            <div class="section-header">
+                <h2 class="section-title">Recent Workouts</h2>
+                <a href="#" class="section-action">View All</a>
+            </div>
+            <div class="workout-list">
+                <div class="workout-item">
+                    <div class="workout-info">
+                        <div class="workout-day">Pull Day</div>
+                        <div class="workout-date">Today · 52 min</div>
+                    </div>
+                    <div class="workout-stats">
+                        <div class="workout-exercises">6 exercises</div>
+                        <div class="workout-volume">8,240 lbs</div>
+                    </div>
+                    <span class="workout-arrow">›</span>
+                </div>
+                <div class="workout-item">
+                    <div class="workout-info">
+                        <div class="workout-day">Push Day</div>
+                        <div class="workout-date">Yesterday · 48 min</div>
+                    </div>
+                    <div class="workout-stats">
+                        <div class="workout-exercises">5 exercises</div>
+                        <div class="workout-volume">7,650 lbs</div>
+                    </div>
+                    <span class="workout-arrow">›</span>
+                </div>
+                <div class="workout-item">
+                    <div class="workout-info">
+                        <div class="workout-day">Legs</div>
+                        <div class="workout-date">2 days ago · 55 min</div>
+                    </div>
+                    <div class="workout-stats">
+                        <div class="workout-exercises">4 exercises</div>
+                        <div class="workout-volume">9,120 lbs</div>
+                    </div>
+                    <span class="workout-arrow">›</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="insights-section">
+            <div class="section-header">
+                <h2 class="section-title">Insight</h2>
+            </div>
+            <div class="insight-card">
+                <div class="insight-icon">💪</div>
+                <div class="insight-title">Strong Pull Week</div>
+                <div class="insight-text">Your pull volume is up 15% this week. You're on track to hit a new weighted pull-up PR soon.</div>
+            </div>
+        </section>
+
+        <div class="footer-spacer"></div>
+    </div>
+
+    <nav class="nav-hint">
+        <div class="nav-item active">⬡</div>
+        <div class="nav-item">📊</div>
+        <div class="nav-item">📝</div>
+        <div class="nav-item">⚙</div>
+    </nav>
+</body>
+</html>

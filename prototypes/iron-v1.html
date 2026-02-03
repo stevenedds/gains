@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRON TEMPLE // RAW</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --steel-dark: #0a0a0a;
+            --steel-med: #1a1a1a;
+            --steel-light: #2a2a2a;
+            --rust: #8B4513;
+            --rust-bright: #CD5C0C;
+            --hazard-yellow: #FFD100;
+            --hazard-black: #0d0d0d;
+            --warning-red: #DC143C;
+            --concrete: #3a3a3a;
+            --text-primary: #e0e0e0;
+            --text-dim: #777;
+            --hydraulic-blue: #1E90FF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Oswald', sans-serif;
+            background: var(--steel-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Concrete texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Hazard stripe generator */
+        .hazard-stripe {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--hazard-yellow),
+                var(--hazard-yellow) 10px,
+                var(--hazard-black) 10px,
+                var(--hazard-black) 20px
+            );
+            height: 8px;
+        }
+
+        .hazard-stripe-thin {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--hazard-yellow),
+                var(--hazard-yellow) 5px,
+                var(--hazard-black) 5px,
+                var(--hazard-black) 10px
+            );
+            height: 4px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(180deg, var(--steel-med) 0%, var(--steel-dark) 100%);
+            border-bottom: 3px solid var(--concrete);
+            position: relative;
+        }
+
+        .header-content {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--steel-light);
+            border: 3px solid var(--rust);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .logo-icon::before {
+            content: '⚙';
+            font-size: 28px;
+            color: var(--rust-bright);
+        }
+
+        .logo-text h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            color: var(--text-primary);
+            text-shadow: 2px 2px 0 var(--steel-dark);
+        }
+
+        .logo-text span {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--rust-bright);
+            letter-spacing: 2px;
+        }
+
+        .streak-badge {
+            background: var(--steel-light);
+            border: 2px solid var(--hazard-yellow);
+            padding: 10px 15px;
+            position: relative;
+        }
+
+        .streak-badge::before {
+            content: '⚠';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            background: var(--hazard-yellow);
+            color: var(--hazard-black);
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .streak-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            color: var(--hazard-yellow);
+        }
+
+        .streak-label {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        /* Main container */
+        main {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Warning Label */
+        .warning-label {
+            background: var(--warning-red);
+            color: white;
+            padding: 8px 15px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .warning-label::before {
+            content: '!';
+            width: 18px;
+            height: 18px;
+            background: white;
+            color: var(--warning-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--steel-med);
+            border: 2px solid var(--concrete);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--hazard-yellow) 0px,
+                var(--hazard-yellow) 8px,
+                transparent 8px,
+                transparent 12px
+            );
+        }
+
+        .stat-header {
+            background: var(--steel-light);
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--concrete);
+        }
+
+        .stat-header span {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        .stat-body {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: var(--rust-bright);
+            line-height: 1;
+        }
+
+        .stat-unit {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+
+        .section-header h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            color: var(--text-primary);
+        }
+
+        .section-line {
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--concrete) 0%, transparent 100%);
+        }
+
+        .section-badge {
+            background: var(--steel-light);
+            border: 1px solid var(--rust);
+            padding: 4px 10px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--rust-bright);
+        }
+
+        /* PR Board */
+        .pr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .pr-card {
+            background: var(--steel-med);
+            border: 2px solid var(--concrete);
+            position: relative;
+        }
+
+        .pr-card.featured {
+            border-color: var(--rust-bright);
+        }
+
+        .pr-card.featured::after {
+            content: 'MAX LOAD';
+            position: absolute;
+            top: 10px;
+            right: -25px;
+            background: var(--warning-red);
+            color: white;
+            padding: 2px 30px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            transform: rotate(45deg);
+        }
+
+        .pr-lift {
+            background: var(--steel-light);
+            padding: 12px;
+            border-bottom: 1px solid var(--concrete);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pr-lift-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--rust);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .pr-lift-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .pr-stats {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .pr-weight {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.2rem;
+            color: var(--hazard-yellow);
+            line-height: 1;
+        }
+
+        .pr-weight span {
+            font-size: 1rem;
+            color: var(--text-dim);
+        }
+
+        .pr-date {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+
+        /* Progress Chart */
+        .chart-container {
+            background: var(--steel-med);
+            border: 2px solid var(--concrete);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .chart-header {
+            background: var(--steel-light);
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--concrete);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-title {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+        }
+
+        .chart-body {
+            padding: 20px;
+            height: 200px;
+            position: relative;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 100%;
+            gap: 10px;
+        }
+
+        .chart-bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .chart-bar {
+            width: 100%;
+            max-width: 40px;
+            background: linear-gradient(180deg, var(--rust-bright) 0%, var(--rust) 100%);
+            border-top: 3px solid var(--hazard-yellow);
+            position: relative;
+        }
+
+        .chart-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+
+        .chart-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        /* Workouts */
+        .workout-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .workout-item {
+            background: var(--steel-med);
+            border: 2px solid var(--concrete);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .workout-date {
+            background: var(--steel-light);
+            padding: 15px;
+            border-right: 1px solid var(--concrete);
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .workout-day {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            color: var(--rust-bright);
+        }
+
+        .workout-month {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        .workout-content {
+            flex: 1;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .workout-type {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .workout-exercises {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        .workout-tonnage {
+            text-align: right;
+        }
+
+        .tonnage-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            color: var(--hazard-yellow);
+        }
+
+        .tonnage-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        /* Insights */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .insight-card {
+            background: var(--steel-med);
+            border: 2px solid var(--concrete);
+            border-left: 4px solid var(--hydraulic-blue);
+            padding: 15px;
+        }
+
+        .insight-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .insight-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--hydraulic-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .insight-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .insight-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        .insight-stat {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            color: var(--hydraulic-blue);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            border-top: 3px solid var(--concrete);
+        }
+
+        .footer-content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .footer-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        /* Bolt decorations */
+        .bolt {
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle at 30% 30%, var(--steel-light) 0%, var(--steel-dark) 100%);
+            border: 1px solid var(--concrete);
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 600px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .pr-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .workout-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .workout-tonnage {
+                text-align: left;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px var(--rust-bright); }
+            50% { box-shadow: 0 0 15px var(--rust-bright); }
+        }
+
+        .pr-card.featured {
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes hazard-scroll {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 0; }
+        }
+
+        .hazard-stripe {
+            animation: hazard-scroll 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="hazard-stripe"></div>
+
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <div class="logo-text">
+                    <h1>IRON TEMPLE</h1>
+                    <span>// HEAVY MACHINERY DIVISION</span>
+                </div>
+            </div>
+            <div class="streak-badge">
+                <div class="streak-number">47</div>
+                <div class="streak-label">DAY STREAK</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="hazard-stripe-thin"></div>
+
+    <main>
+        <div class="warning-label">MAXIMUM LOAD CAPACITY REACHED - SYSTEM OPERATING AT PEAK</div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header"><span>SESSIONS/WEEK</span></div>
+                <div class="stat-body">
+                    <div class="stat-value">5</div>
+                    <div class="stat-unit">WORKOUTS</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header"><span>TOTAL TONNAGE</span></div>
+                <div class="stat-body">
+                    <div class="stat-value">47.2K</div>
+                    <div class="stat-unit">LBS MOVED</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header"><span>PR COUNT</span></div>
+                <div class="stat-body">
+                    <div class="stat-value">12</div>
+                    <div class="stat-unit">THIS MONTH</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header"><span>AVG INTENSITY</span></div>
+                <div class="stat-body">
+                    <div class="stat-value">82%</div>
+                    <div class="stat-unit">OF 1RM</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>MAXIMUM LOADS</h2>
+            <div class="section-line"></div>
+            <div class="section-badge">PR REGISTRY</div>
+        </div>
+
+        <div class="pr-grid">
+            <div class="pr-card featured">
+                <div class="pr-lift">
+                    <div class="pr-lift-icon">🏋</div>
+                    <div class="pr-lift-name">Weighted Pull-Up</div>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-weight">+90 <span>LBS</span></div>
+                    <div class="pr-date">2024.01.15</div>
+                </div>
+            </div>
+            <div class="pr-card">
+                <div class="pr-lift">
+                    <div class="pr-lift-icon">📊</div>
+                    <div class="pr-lift-name">Lat Pulldown</div>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-weight">185 <span>LBS</span></div>
+                    <div class="pr-date">2024.01.12</div>
+                </div>
+            </div>
+            <div class="pr-card">
+                <div class="pr-lift">
+                    <div class="pr-lift-icon">🦵</div>
+                    <div class="pr-lift-name">Bulgarian Split Squat</div>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-weight">70 <span>LBS</span></div>
+                    <div class="pr-date">2024.01.10</div>
+                </div>
+            </div>
+            <div class="pr-card">
+                <div class="pr-lift">
+                    <div class="pr-lift-icon">💪</div>
+                    <div class="pr-lift-name">Neck Curl</div>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-weight">45 <span>LBS</span></div>
+                    <div class="pr-date">2024.01.08</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>LOAD PROGRESSION</h2>
+            <div class="section-line"></div>
+            <div class="section-badge">8 WEEKS</div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title">WEEKLY TONNAGE OUTPUT</div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: var(--rust-bright);"></div>
+                        TOTAL LOAD
+                    </div>
+                </div>
+            </div>
+            <div class="chart-body">
+                <div class="chart-bars">
+                    <div class="chart-bar-group">
+                        <div class="chart-bar" style="height: 60%;" data-value="32K"></div>
+                        <div class="chart-label">W1</div>
+                    </div>
+                    <div class="chart-bar-group">
+                        <div class="chart-bar" style="height: 65%;" data-value="35K"></div>
+                        <div class="chart-label">W2</div>
+                    </div>
+                    <div class="chart-bar-group">
+                        <div class="chart-bar" style="height: 70%;" data-value="38K"></div>
+                        <div class="chart-label">W3</div>
+                    </div>
+                    <div class="chart-bar-group">
+                        <div class="chart-bar" style="height: 55%;" data-value="28K"></div>
+                        <div class="chart-label">W4</div>
+                    </div>
+                    <div class="chart-bar-group">
+                        <div class="chart-bar" style="height: 75%;" data-value="41K"></div>
+                        <div class="chart-label">W5</div>
+                    </div>
+                    <div class="chart-bar-group">
+                        <div class="chart-bar" style="height: 80%;" data-value="44K"></div>
+                        <div class="chart-label">W6</div>
+                    </div>
+                    <div class="chart-bar-group">
+                        <div class="chart-bar" style="height: 78%;" data-value="42K"></div>
+                        <div class="chart-label">W7</div>
+                    </div>
+                    <div class="chart-bar-group">
+                        <div class="chart-bar" style="height: 90%;" data-value="47K"></div>
+                        <div class="chart-label">W8</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>OPERATION LOG</h2>
+            <div class="section-line"></div>
+            <div class="section-badge">RECENT</div>
+        </div>
+
+        <div class="workout-list">
+            <div class="workout-item">
+                <div class="workout-date">
+                    <div class="workout-day">15</div>
+                    <div class="workout-month">JAN</div>
+                </div>
+                <div class="workout-content">
+                    <div>
+                        <div class="workout-type">Pull Day</div>
+                        <div class="workout-exercises">Pull-ups, Rows, Lat Pulldown, Curls</div>
+                    </div>
+                    <div class="workout-tonnage">
+                        <div class="tonnage-value">12,450</div>
+                        <div class="tonnage-label">LBS</div>
+                    </div>
+                </div>
+            </div>
+            <div class="workout-item">
+                <div class="workout-date">
+                    <div class="workout-day">14</div>
+                    <div class="workout-month">JAN</div>
+                </div>
+                <div class="workout-content">
+                    <div>
+                        <div class="workout-type">Push Day</div>
+                        <div class="workout-exercises">Bench, OHP, Dips, Tricep Ext</div>
+                    </div>
+                    <div class="workout-tonnage">
+                        <div class="tonnage-value">10,820</div>
+                        <div class="tonnage-label">LBS</div>
+                    </div>
+                </div>
+            </div>
+            <div class="workout-item">
+                <div class="workout-date">
+                    <div class="workout-day">12</div>
+                    <div class="workout-month">JAN</div>
+                </div>
+                <div class="workout-content">
+                    <div>
+                        <div class="workout-type">Leg Day</div>
+                        <div class="workout-exercises">BSS, RDL, Leg Press, Calf Raises</div>
+                    </div>
+                    <div class="workout-tonnage">
+                        <div class="tonnage-value">15,200</div>
+                        <div class="tonnage-label">LBS</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>SYSTEM DIAGNOSTICS</h2>
+            <div class="section-line"></div>
+            <div class="section-badge">INSIGHTS</div>
+        </div>
+
+        <div class="insights-grid">
+            <div class="insight-card">
+                <div class="insight-header">
+                    <div class="insight-icon">📈</div>
+                    <div class="insight-title">Volume Trend</div>
+                </div>
+                <div class="insight-stat">+18%</div>
+                <div class="insight-text">Weekly tonnage up from last month. Hydraulic systems operating at increased capacity.</div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-header">
+                    <div class="insight-icon">⚡</div>
+                    <div class="insight-title">PR Velocity</div>
+                </div>
+                <div class="insight-stat">3.2/wk</div>
+                <div class="insight-text">Personal records per week. Maximum load thresholds being pushed consistently.</div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-header">
+                    <div class="insight-icon">⚖️</div>
+                    <div class="insight-title">Push/Pull Ratio</div>
+                </div>
+                <div class="insight-stat">0.95</div>
+                <div class="insight-text">Near optimal balance. Systems calibrated for structural integrity.</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="hazard-stripe-thin"></div>
+        <div class="footer-content">
+            <div class="footer-text">// IRON TEMPLE MONITORING SYSTEM v2.4.1 // ALL SYSTEMS OPERATIONAL //</div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -333,8 +333,6 @@
         .workout-log {
             background: var(--bg-dark);
             border: 3px solid var(--concrete);
-            max-height: 500px;
-            overflow-y: auto;
         }
 
         .workout-entry {
@@ -379,16 +377,6 @@
         .workout-detail p {
             font-size: 0.75rem;
             color: var(--text-dim);
-        }
-
-        .workout-detail .pr-badge {
-            display: inline-block;
-            background: var(--acid-green);
-            color: var(--bg-black);
-            padding: 2px 8px;
-            font-size: 0.6rem;
-            font-weight: 700;
-            margin-left: 8px;
         }
 
         .workout-volume {
@@ -458,6 +446,33 @@
             color: var(--acid-green);
         }
 
+        /* Warning stripe footer */
+        .footer {
+            margin-top: 50px;
+            padding: 20px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--warning-yellow) 0px,
+                var(--warning-yellow) 20px,
+                var(--bg-black) 20px,
+                var(--bg-black) 40px
+            );
+        }
+
+        .footer-content {
+            background: var(--bg-black);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-content span {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
         /* Responsive */
         @media (max-width: 900px) {
             .stats-grid {
@@ -509,7 +524,7 @@
         <div class="logo">Iron Temple</div>
         <div class="status">
             System Active
-            <span id="streak-bar">██████ 100%</span>
+            <span>██████ 100%</span>
         </div>
     </header>
 
@@ -517,20 +532,20 @@
         <!-- Stats Grid -->
         <section class="stats-grid">
             <div class="stat-block" data-index="01">
-                <div class="stat-label">Total Workouts</div>
-                <div class="stat-value highlight" id="total-workouts">--</div>
+                <div class="stat-label">Workouts This Week</div>
+                <div class="stat-value highlight">5</div>
             </div>
             <div class="stat-block" data-index="02">
-                <div class="stat-label">Week Streak</div>
-                <div class="stat-value" id="streak">--<span class="stat-unit">wks</span></div>
+                <div class="stat-label">Current Streak</div>
+                <div class="stat-value">23<span class="stat-unit">days</span></div>
             </div>
             <div class="stat-block" data-index="03">
                 <div class="stat-label">Personal Records</div>
-                <div class="stat-value highlight" id="total-prs">--</div>
+                <div class="stat-value highlight">12</div>
             </div>
             <div class="stat-block" data-index="04">
-                <div class="stat-label">Training Since</div>
-                <div class="stat-value" id="start-date">--</div>
+                <div class="stat-label">Total Volume</div>
+                <div class="stat-value">847K<span class="stat-unit">lbs</span></div>
             </div>
         </section>
 
@@ -540,8 +555,37 @@
                 <h2>Personal Records</h2>
                 <span class="tag">Current Max</span>
             </div>
-            <div class="pr-grid" id="pr-grid">
-                <!-- Dynamically populated -->
+            <div class="pr-grid">
+                <div class="pr-card">
+                    <div class="pr-exercise">Bench Press</div>
+                    <div class="pr-weight">225 <span>LBS</span></div>
+                    <div class="pr-meta">Set: Jan 15, 2024</div>
+                </div>
+                <div class="pr-card">
+                    <div class="pr-exercise">Squat</div>
+                    <div class="pr-weight">315 <span>LBS</span></div>
+                    <div class="pr-meta">Set: Jan 22, 2024</div>
+                </div>
+                <div class="pr-card">
+                    <div class="pr-exercise">Deadlift</div>
+                    <div class="pr-weight">405 <span>LBS</span></div>
+                    <div class="pr-meta">Set: Jan 28, 2024</div>
+                </div>
+                <div class="pr-card">
+                    <div class="pr-exercise">OHP</div>
+                    <div class="pr-weight">145 <span>LBS</span></div>
+                    <div class="pr-meta">Set: Jan 10, 2024</div>
+                </div>
+                <div class="pr-card">
+                    <div class="pr-exercise">Weighted Pull-up</div>
+                    <div class="pr-weight">+70 <span>LBS</span></div>
+                    <div class="pr-meta">Set: Jan 25, 2024</div>
+                </div>
+                <div class="pr-card">
+                    <div class="pr-exercise">Barbell Row</div>
+                    <div class="pr-weight">205 <span>LBS</span></div>
+                    <div class="pr-meta">Set: Jan 20, 2024</div>
+                </div>
             </div>
         </section>
 
@@ -549,14 +593,28 @@
         <section class="progress-section">
             <div class="section-header">
                 <h2>Volume Progression</h2>
-                <span class="tag">Weekly Trend</span>
+                <span class="tag">8 Week Trend</span>
             </div>
             <div class="chart-container">
-                <div class="chart-visual" id="chart-visual">
-                    <!-- Dynamically populated -->
+                <div class="chart-visual">
+                    <div class="chart-bar" style="height: 45%;" data-value="32K"></div>
+                    <div class="chart-bar" style="height: 52%;" data-value="38K"></div>
+                    <div class="chart-bar" style="height: 48%;" data-value="35K"></div>
+                    <div class="chart-bar" style="height: 61%;" data-value="44K"></div>
+                    <div class="chart-bar" style="height: 55%;" data-value="40K"></div>
+                    <div class="chart-bar" style="height: 70%;" data-value="51K"></div>
+                    <div class="chart-bar" style="height: 65%;" data-value="47K"></div>
+                    <div class="chart-bar" style="height: 85%;" data-value="62K"></div>
                 </div>
-                <div class="chart-labels" id="chart-labels">
-                    <!-- Dynamically populated -->
+                <div class="chart-labels">
+                    <span>Week 1</span>
+                    <span>Week 2</span>
+                    <span>Week 3</span>
+                    <span>Week 4</span>
+                    <span>Week 5</span>
+                    <span>Week 6</span>
+                    <span>Week 7</span>
+                    <span>Week 8</span>
                 </div>
             </div>
         </section>
@@ -565,161 +623,85 @@
         <section class="workouts-section">
             <div class="section-header">
                 <h2>Workout Log</h2>
-                <span class="tag" id="workout-count">-- Sessions</span>
+                <span class="tag">Recent Sessions</span>
             </div>
-            <div class="workout-log" id="workout-log">
-                <!-- Dynamically populated -->
+            <div class="workout-log">
+                <div class="workout-entry">
+                    <div class="workout-date">
+                        JAN 28
+                        <span>Sunday</span>
+                    </div>
+                    <div class="workout-detail">
+                        <h4>Pull Day // Back + Biceps</h4>
+                        <p>Deadlift 405x1 (PR) • Lat Pulldown • Barbell Row • Curls</p>
+                    </div>
+                    <div class="workout-volume">
+                        <div class="number">18,450</div>
+                        <div class="label">Total LBS</div>
+                    </div>
+                </div>
+                <div class="workout-entry">
+                    <div class="workout-date">
+                        JAN 27
+                        <span>Saturday</span>
+                    </div>
+                    <div class="workout-detail">
+                        <h4>Push Day // Chest + Shoulders</h4>
+                        <p>Bench Press • Incline DB • OHP • Lateral Raise • Triceps</p>
+                    </div>
+                    <div class="workout-volume">
+                        <div class="number">15,280</div>
+                        <div class="label">Total LBS</div>
+                    </div>
+                </div>
+                <div class="workout-entry">
+                    <div class="workout-date">
+                        JAN 25
+                        <span>Thursday</span>
+                    </div>
+                    <div class="workout-detail">
+                        <h4>Legs // Quad Focus</h4>
+                        <p>Squat • Leg Press • Bulgarian Split Squat • Leg Extension</p>
+                    </div>
+                    <div class="workout-volume">
+                        <div class="number">22,100</div>
+                        <div class="label">Total LBS</div>
+                    </div>
+                </div>
+                <div class="workout-entry">
+                    <div class="workout-date">
+                        JAN 24
+                        <span>Wednesday</span>
+                    </div>
+                    <div class="workout-detail">
+                        <h4>Pull Day // Back + Biceps</h4>
+                        <p>Weighted Pull-ups +70 (PR) • Cable Row • Face Pull • Hammer Curls</p>
+                    </div>
+                    <div class="workout-volume">
+                        <div class="number">14,750</div>
+                        <div class="label">Total LBS</div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- Motivation Block -->
         <section class="motivation-block">
             <div class="motivation-quote">
-                The iron never lies. The weight doesn't care about your excuses.
+                The iron never lies. 225 doesn't become 135 because you're having a bad day.
             </div>
             <div class="motivation-stat">
-                <span>Current Focus</span>
-                <strong id="next-target">WEIGHTED PULL-UPS</strong>
+                <span>Next Target</span>
+                <strong>315 LBS BENCH</strong>
             </div>
         </section>
     </main>
 
-    <script>
-        fetch('workouts.json')
-            .then(r => r.json())
-            .then(data => {
-                const exercises = data.exercises;
-                const prs = data.prs;
-                const workouts = data.workouts;
-                
-                // Stats
-                document.getElementById('total-workouts').textContent = workouts.length;
-                document.getElementById('total-prs').textContent = Object.keys(prs).length;
-                document.getElementById('streak').innerHTML = '22<span class="stat-unit">wks</span>';
-                document.getElementById('start-date').textContent = 'SEP 25';
-                document.getElementById('workout-count').textContent = workouts.length + ' Sessions';
-                
-                // PR Grid
-                const prGrid = document.getElementById('pr-grid');
-                const prNames = {
-                    'weighted_pullups': 'Weighted Pull-ups',
-                    'techno_lat_pull': 'Lat Pull',
-                    'seated_db_press': 'DB Press',
-                    'bulgarian_split_squat': 'Bulgarian Split',
-                    'neck_curls': 'Neck Curls',
-                    'overhead_tricep_ext': 'Tricep Ext',
-                    'incline_chest_press': 'Incline Press'
-                };
-                
-                Object.entries(prs).forEach(([id, pr]) => {
-                    const name = prNames[id] || exercises[id]?.name || id;
-                    const date = new Date(pr.date + 'T12:00:00');
-                    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                    
-                    prGrid.innerHTML += `
-                        <div class="pr-card">
-                            <div class="pr-exercise">${name}</div>
-                            <div class="pr-weight">${pr.weight} <span>× ${pr.reps}</span></div>
-                            <div class="pr-meta">Set: ${dateStr}</div>
-                        </div>
-                    `;
-                });
-                
-                // Volume Chart (last 8 workouts)
-                const chartVisual = document.getElementById('chart-visual');
-                const chartLabels = document.getElementById('chart-labels');
-                const recentWorkouts = workouts.slice(0, 8).reverse();
-                
-                const volumes = recentWorkouts.map(w => {
-                    let vol = 0;
-                    w.exercises.forEach(ex => {
-                        ex.sets.forEach(s => {
-                            vol += (s.weight || 0) * s.reps;
-                        });
-                    });
-                    return vol;
-                });
-                
-                const maxVol = Math.max(...volumes);
-                
-                volumes.forEach((vol, i) => {
-                    const pct = (vol / maxVol) * 100;
-                    const volK = (vol / 1000).toFixed(1) + 'K';
-                    chartVisual.innerHTML += `<div class="chart-bar" style="height: ${pct}%;" data-value="${volK}"></div>`;
-                    
-                    const date = new Date(recentWorkouts[i].date + 'T12:00:00');
-                    const label = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                    chartLabels.innerHTML += `<span>${label}</span>`;
-                });
-                
-                // Workout Log
-                const workoutLog = document.getElementById('workout-log');
-                const dayLabels = {
-                    'Monday': 'Pull + Chest',
-                    'Wednesday': 'Legs + Access',
-                    'Friday': 'Shoulders + Back'
-                };
-                const shortNames = {
-                    'weighted_pullups': 'Pull-ups',
-                    'incline_chest_press': 'Incline',
-                    'techno_lat_pull': 'Lat Pull',
-                    'seated_db_press': 'DB Press',
-                    'bulgarian_split_squat': 'BSS',
-                    'pistol_squat': 'Pistols',
-                    'neck_curls': 'Neck',
-                    'overhead_tricep_ext': 'Triceps'
-                };
-                
-                workouts.forEach(w => {
-                    const date = new Date(w.date + 'T12:00:00');
-                    const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
-                    const dayName = w.day;
-                    
-                    let vol = 0;
-                    let exerciseList = [];
-                    let hasPR = false;
-                    
-                    w.exercises.forEach(ex => {
-                        const name = shortNames[ex.id] || ex.id;
-                        const topSet = ex.sets.reduce((best, s) => 
-                            (s.weight > (best.weight || 0)) ? s : best, ex.sets[0]);
-                        
-                        const setStr = topSet.weight === 0 
-                            ? `${name} BW×${topSet.reps}` 
-                            : `${name} ${topSet.weight}×${topSet.reps}`;
-                        
-                        // Check if this is a PR
-                        const pr = prs[ex.id];
-                        if (pr && pr.date === w.date) {
-                            hasPR = true;
-                            exerciseList.push(setStr + ' 🏆');
-                        } else {
-                            exerciseList.push(setStr);
-                        }
-                        
-                        ex.sets.forEach(s => {
-                            vol += (s.weight || 0) * s.reps;
-                        });
-                    });
-                    
-                    workoutLog.innerHTML += `
-                        <div class="workout-entry">
-                            <div class="workout-date">
-                                ${monthDay}
-                                <span>${dayName}</span>
-                            </div>
-                            <div class="workout-detail">
-                                <h4>${dayLabels[dayName] || dayName}${hasPR ? '<span class="pr-badge">PR</span>' : ''}</h4>
-                                <p>${exerciseList.join(' • ')}</p>
-                            </div>
-                            <div class="workout-volume">
-                                <div class="number">${vol.toLocaleString()}</div>
-                                <div class="label">Total LBS</div>
-                            </div>
-                        </div>
-                    `;
-                });
-            });
-    </script>
+    <footer class="footer">
+        <div class="footer-content">
+            <span>System Status: Operational</span>
+            <span>Iron Temple v1.0 // Built Different</span>
+        </div>
+    </footer>
 </body>
 </html>

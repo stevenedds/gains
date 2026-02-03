@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAINS.exe // NEURAL INTERFACE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --void: #050508;
+            --terminal-bg: #0a0a10;
+            --grid-line: #1a1a25;
+            --cyan: #00ffff;
+            --magenta: #ff00ff;
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #9d4edd;
+            --neon-green: #39ff14;
+            --text-dim: #4a4a5a;
+            --text-glow: #00ffff;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.8; }
+            94% { opacity: 1; }
+            97% { opacity: 0.9; }
+            98% { opacity: 1; }
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 5px var(--cyan), 0 0 10px var(--cyan), 0 0 20px var(--cyan); }
+            50% { box-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan), 0 0 40px var(--cyan); }
+        }
+
+        @keyframes datastream {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        @keyframes textGlitch {
+            0%, 100% { text-shadow: 0 0 10px var(--cyan); }
+            20% { text-shadow: -2px 0 var(--magenta), 2px 0 var(--cyan); }
+            40% { text-shadow: 2px 0 var(--magenta), -2px 0 var(--cyan); }
+            60% { text-shadow: 0 0 15px var(--neon-pink); }
+        }
+
+        body {
+            background: var(--void);
+            color: var(--cyan);
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            animation: flicker 5s infinite;
+        }
+
+        /* CRT Screen effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(
+                    to bottom,
+                    transparent 50%,
+                    rgba(0, 0, 0, 0.1) 50%
+                );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Moving scanline */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to bottom, transparent, rgba(0, 255, 255, 0.1), transparent);
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 1001;
+        }
+
+        /* Grid background */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 50px 50px;
+            perspective: 500px;
+            z-index: -1;
+        }
+
+        .grid-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to top, var(--neon-purple) 0%, transparent 70%);
+            opacity: 0.1;
+        }
+
+        /* Header - Terminal style */
+        .header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--cyan);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        .logo-icon::before {
+            content: '◇';
+            font-size: 1.5rem;
+            color: var(--cyan);
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .system-status {
+            font-size: 0.7rem;
+            color: var(--neon-green);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            position: relative;
+        }
+
+        /* Section headers */
+        .section-header {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--cyan);
+            animation: textGlitch 3s infinite;
+        }
+
+        .section-header::before {
+            content: '>';
+            color: var(--neon-green);
+        }
+
+        .section-header::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--cyan), transparent);
+        }
+
+        /* Stats - Holographic displays */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .stat-holo {
+            background: rgba(0, 255, 255, 0.03);
+            border: 1px solid var(--cyan);
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-holo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 255, 255, 0.1),
+                transparent
+            );
+            animation: datastream 3s linear infinite;
+        }
+
+        .stat-holo::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--cyan));
+        }
+
+        .stat-holo:hover {
+            background: rgba(0, 255, 255, 0.08);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(180deg, var(--cyan), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+
+        .stat-unit {
+            font-size: 0.8rem;
+            color: var(--magenta);
+        }
+
+        .stat-bar {
+            margin-top: 15px;
+            height: 4px;
+            background: var(--grid-line);
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-green), var(--cyan));
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        /* PR Board - Data matrix */
+        .pr-section {
+            margin-bottom: 50px;
+        }
+
+        .pr-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .pr-node {
+            background: linear-gradient(135deg, rgba(157, 78, 221, 0.1), rgba(0, 255, 255, 0.05));
+            border: 1px solid var(--neon-purple);
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pr-node::before {
+            content: attr(data-id);
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        .pr-node:hover {
+            border-color: var(--magenta);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.2), inset 0 0 30px rgba(255, 0, 255, 0.05);
+        }
+
+        .pr-exercise {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--magenta);
+            margin-bottom: 15px;
+        }
+
+        .pr-weight {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--neon-green);
+            text-shadow: 0 0 20px var(--neon-green);
+        }
+
+        .pr-weight span {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .pr-meta {
+            margin-top: 12px;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+
+        .pr-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--neon-green);
+            margin-right: 8px;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Progress - Waveform visualization */
+        .progress-section {
+            margin-bottom: 50px;
+        }
+
+        .waveform-container {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--grid-line);
+            padding: 30px;
+            position: relative;
+        }
+
+        .waveform-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--grid-line);
+        }
+
+        .waveform-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--cyan);
+        }
+
+        .waveform-legend {
+            display: flex;
+            gap: 20px;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-line {
+            width: 20px;
+            height: 2px;
+        }
+
+        .legend-line.volume { background: var(--cyan); box-shadow: 0 0 5px var(--cyan); }
+        .legend-line.intensity { background: var(--magenta); box-shadow: 0 0 5px var(--magenta); }
+
+        .waveform-visual {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            position: relative;
+        }
+
+        .waveform-visual::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--grid-line);
+        }
+
+        .wave-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            height: 100%;
+            justify-content: center;
+        }
+
+        .wave-segment {
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .wave-segment.up {
+            background: linear-gradient(to top, var(--cyan), rgba(0, 255, 255, 0.3));
+            transform-origin: bottom;
+        }
+
+        .wave-segment.down {
+            background: linear-gradient(to bottom, var(--magenta), rgba(255, 0, 255, 0.3));
+            transform-origin: top;
+        }
+
+        .wave-bar:hover .wave-segment {
+            filter: brightness(1.5);
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        /* Recent workouts - Log stream */
+        .log-section {
+            margin-bottom: 50px;
+        }
+
+        .log-stream {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--grid-line);
+            font-size: 0.85rem;
+        }
+
+        .log-entry {
+            display: grid;
+            grid-template-columns: 100px 1fr 120px;
+            gap: 20px;
+            padding: 20px;
+            border-bottom: 1px solid var(--grid-line);
+            transition: background 0.2s;
+        }
+
+        .log-entry:hover {
+            background: rgba(0, 255, 255, 0.03);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-timestamp {
+            color: var(--neon-green);
+            font-size: 0.75rem;
+        }
+
+        .log-timestamp .day {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .log-content {
+            color: var(--cyan);
+        }
+
+        .log-content .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: var(--magenta);
+        }
+
+        .log-content .details {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .log-volume {
+            text-align: right;
+        }
+
+        .log-volume .value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--neon-green);
+        }
+
+        .log-volume .label {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        /* Neural insight - AI message */
+        .neural-insight {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.05), rgba(0, 255, 255, 0.05));
+            border: 1px solid var(--magenta);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .neural-insight::before {
+            content: 'NEURAL_ANALYSIS.exe';
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        .neural-insight::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--magenta), var(--cyan));
+        }
+
+        .neural-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--magenta);
+            margin-bottom: 15px;
+        }
+
+        .neural-message {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: var(--cyan);
+            max-width: 800px;
+        }
+
+        .neural-message .highlight {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .neural-stats {
+            display: flex;
+            gap: 50px;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid var(--grid-line);
+        }
+
+        .neural-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .neural-stat .value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .neural-stat .label {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 20px 30px;
+            border-top: 1px solid var(--grid-line);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .footer span:last-child {
+            color: var(--cyan);
+        }
+
+        /* Responsive */
+        @media (max-width: 1000px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .pr-matrix {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .pr-matrix {
+                grid-template-columns: 1fr;
+            }
+            .log-entry {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .log-volume {
+                text-align: left;
+            }
+            .neural-message {
+                font-size: 1.1rem;
+            }
+            .neural-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        /* Boot sequence animation */
+        @keyframes bootUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-holo, .pr-node, .log-entry {
+            opacity: 0;
+            animation: bootUp 0.5s ease forwards;
+        }
+
+        .stat-holo:nth-child(1) { animation-delay: 0.1s; }
+        .stat-holo:nth-child(2) { animation-delay: 0.2s; }
+        .stat-holo:nth-child(3) { animation-delay: 0.3s; }
+        .stat-holo:nth-child(4) { animation-delay: 0.4s; }
+
+        .pr-node:nth-child(1) { animation-delay: 0.5s; }
+        .pr-node:nth-child(2) { animation-delay: 0.6s; }
+        .pr-node:nth-child(3) { animation-delay: 0.7s; }
+        .pr-node:nth-child(4) { animation-delay: 0.8s; }
+        .pr-node:nth-child(5) { animation-delay: 0.9s; }
+        .pr-node:nth-child(6) { animation-delay: 1.0s; }
+
+        .log-entry:nth-child(1) { animation-delay: 1.1s; }
+        .log-entry:nth-child(2) { animation-delay: 1.2s; }
+        .log-entry:nth-child(3) { animation-delay: 1.3s; }
+        .log-entry:nth-child(4) { animation-delay: 1.4s; }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <div class="logo-text">Gains.exe</div>
+        </div>
+        <div class="system-status">
+            <span class="status-dot"></span>
+            Neural Link Active // User: STEVEN
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Stats Grid -->
+        <section class="stats-section">
+            <div class="section-header">
+                <h2>Performance Metrics</h2>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-holo">
+                    <div class="stat-label">Sessions This Cycle</div>
+                    <div class="stat-value">5</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" style="width: 71%;"></div>
+                    </div>
+                </div>
+                <div class="stat-holo">
+                    <div class="stat-label">Streak Protocol</div>
+                    <div class="stat-value">23 <span class="stat-unit">DAYS</span></div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" style="width: 92%;"></div>
+                    </div>
+                </div>
+                <div class="stat-holo">
+                    <div class="stat-label">Records Logged</div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" style="width: 48%;"></div>
+                    </div>
+                </div>
+                <div class="stat-holo">
+                    <div class="stat-label">Total Mass Moved</div>
+                    <div class="stat-value">847K <span class="stat-unit">LBS</span></div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" style="width: 85%;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PR Matrix -->
+        <section class="pr-section">
+            <div class="section-header">
+                <h2>Personal Record Matrix</h2>
+            </div>
+            <div class="pr-matrix">
+                <div class="pr-node" data-id="PR_001">
+                    <div class="pr-exercise">Bench Press</div>
+                    <div class="pr-weight">225 <span>LBS</span></div>
+                    <div class="pr-meta"><span class="pr-indicator"></span>2024.01.15</div>
+                </div>
+                <div class="pr-node" data-id="PR_002">
+                    <div class="pr-exercise">Back Squat</div>
+                    <div class="pr-weight">315 <span>LBS</span></div>
+                    <div class="pr-meta"><span class="pr-indicator"></span>2024.01.22</div>
+                </div>
+                <div class="pr-node" data-id="PR_003">
+                    <div class="pr-exercise">Deadlift</div>
+                    <div class="pr-weight">405 <span>LBS</span></div>
+                    <div class="pr-meta"><span class="pr-indicator"></span>2024.01.28</div>
+                </div>
+                <div class="pr-node" data-id="PR_004">
+                    <div class="pr-exercise">Overhead Press</div>
+                    <div class="pr-weight">145 <span>LBS</span></div>
+                    <div class="pr-meta"><span class="pr-indicator"></span>2024.01.10</div>
+                </div>
+                <div class="pr-node" data-id="PR_005">
+                    <div class="pr-exercise">Weighted Pull-up</div>
+                    <div class="pr-weight">+70 <span>LBS</span></div>
+                    <div class="pr-meta"><span class="pr-indicator"></span>2024.01.25</div>
+                </div>
+                <div class="pr-node" data-id="PR_006">
+                    <div class="pr-exercise">Barbell Row</div>
+                    <div class="pr-weight">205 <span>LBS</span></div>
+                    <div class="pr-meta"><span class="pr-indicator"></span>2024.01.20</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Waveform Progress -->
+        <section class="progress-section">
+            <div class="section-header">
+                <h2>Progression Waveform</h2>
+            </div>
+            <div class="waveform-container">
+                <div class="waveform-header">
+                    <div class="waveform-title">8-WEEK ANALYSIS</div>
+                    <div class="waveform-legend">
+                        <div class="legend-item">
+                            <div class="legend-line volume"></div>
+                            VOLUME
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-line intensity"></div>
+                            INTENSITY
+                        </div>
+                    </div>
+                </div>
+                <div class="waveform-visual">
+                    <div class="wave-bar">
+                        <div class="wave-segment up" style="height: 45px;"></div>
+                        <div class="wave-segment down" style="height: 35px;"></div>
+                    </div>
+                    <div class="wave-bar">
+                        <div class="wave-segment up" style="height: 55px;"></div>
+                        <div class="wave-segment down" style="height: 40px;"></div>
+                    </div>
+                    <div class="wave-bar">
+                        <div class="wave-segment up" style="height: 48px;"></div>
+                        <div class="wave-segment down" style="height: 50px;"></div>
+                    </div>
+                    <div class="wave-bar">
+                        <div class="wave-segment up" style="height: 65px;"></div>
+                        <div class="wave-segment down" style="height: 55px;"></div>
+                    </div>
+                    <div class="wave-bar">
+                        <div class="wave-segment up" style="height: 58px;"></div>
+                        <div class="wave-segment down" style="height: 48px;"></div>
+                    </div>
+                    <div class="wave-bar">
+                        <div class="wave-segment up" style="height: 72px;"></div>
+                        <div class="wave-segment down" style="height: 60px;"></div>
+                    </div>
+                    <div class="wave-bar">
+                        <div class="wave-segment up" style="height: 68px;"></div>
+                        <div class="wave-segment down" style="height: 55px;"></div>
+                    </div>
+                    <div class="wave-bar">
+                        <div class="wave-segment up" style="height: 85px;"></div>
+                        <div class="wave-segment down" style="height: 65px;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Log Stream -->
+        <section class="log-section">
+            <div class="section-header">
+                <h2>Session Log Stream</h2>
+            </div>
+            <div class="log-stream">
+                <div class="log-entry">
+                    <div class="log-timestamp">
+                        <div class="day">28</div>
+                        JAN.2024
+                    </div>
+                    <div class="log-content">
+                        <div class="title">PULL_PROTOCOL // BACK + BICEPS</div>
+                        <div class="details">Deadlift 405×1 [NEW_PR] → Lat Pulldown → Barbell Row → Curls</div>
+                    </div>
+                    <div class="log-volume">
+                        <div class="value">18,450</div>
+                        <div class="label">Mass Units</div>
+                    </div>
+                </div>
+                <div class="log-entry">
+                    <div class="log-timestamp">
+                        <div class="day">27</div>
+                        JAN.2024
+                    </div>
+                    <div class="log-content">
+                        <div class="title">PUSH_PROTOCOL // CHEST + SHOULDERS</div>
+                        <div class="details">Bench Press → Incline DB → OHP → Lateral Raise → Triceps</div>
+                    </div>
+                    <div class="log-volume">
+                        <div class="value">15,280</div>
+                        <div class="label">Mass Units</div>
+                    </div>
+                </div>
+                <div class="log-entry">
+                    <div class="log-timestamp">
+                        <div class="day">25</div>
+                        JAN.2024
+                    </div>
+                    <div class="log-content">
+                        <div class="title">LEG_PROTOCOL // QUAD FOCUS</div>
+                        <div class="details">Squat → Leg Press → Bulgarian Split Squat → Leg Extension</div>
+                    </div>
+                    <div class="log-volume">
+                        <div class="value">22,100</div>
+                        <div class="label">Mass Units</div>
+                    </div>
+                </div>
+                <div class="log-entry">
+                    <div class="log-timestamp">
+                        <div class="day">24</div>
+                        JAN.2024
+                    </div>
+                    <div class="log-content">
+                        <div class="title">PULL_PROTOCOL // BACK + BICEPS</div>
+                        <div class="details">Weighted Pull-ups +70 [NEW_PR] → Cable Row → Face Pull → Hammer Curls</div>
+                    </div>
+                    <div class="log-volume">
+                        <div class="value">14,750</div>
+                        <div class="label">Mass Units</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Neural Insight -->
+        <section class="neural-insight">
+            <div class="neural-label">Neural Analysis Complete</div>
+            <div class="neural-message">
+                Strength trajectory exceeds baseline by <span class="highlight">+18%</span>. Pull patterns showing optimal adaptation. Current velocity suggests <span class="highlight">315 LBS bench</span> achievable within next training cycle. Recommend: maintain protocol intensity.
+            </div>
+            <div class="neural-stats">
+                <div class="neural-stat">
+                    <div class="value">18%</div>
+                    <div class="label">Strength Delta</div>
+                </div>
+                <div class="neural-stat">
+                    <div class="value">315</div>
+                    <div class="label">Next Target</div>
+                </div>
+                <div class="neural-stat">
+                    <div class="value">98%</div>
+                    <div class="label">Protocol Efficiency</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <span>System Status: Optimal</span>
+        <span>GAINS.exe v3.0 // Neural Interface Active</span>
+    </footer>
+</body>
+</html>

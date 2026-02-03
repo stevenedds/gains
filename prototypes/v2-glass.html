@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gains - Glass</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-bg-hover: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-hover: rgba(255, 255, 255, 0.15);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-tertiary: rgba(255, 255, 255, 0.35);
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29 0%, #1a1a40 40%, #24243e 100%);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Animated background orbs */
+        .bg-orbs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            bottom: 20%;
+            left: -100px;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            bottom: -50px;
+            right: 20%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(-30px, -20px) scale(1.02); }
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 0 20px;
+            padding-bottom: 120px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Glass card mixin effect */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .glass:hover {
+            background: var(--glass-bg-hover);
+            border-color: var(--glass-border-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Header */
+        header {
+            padding: 50px 0 35px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .streak-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .streak-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .streak-fire {
+            font-size: 18px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            padding: 18px 14px;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #fff, rgba(255,255,255,0.85));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            padding: 0 4px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .section-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
+        /* PR Board */
+        .pr-section {
+            margin-bottom: 28px;
+        }
+
+        .pr-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .pr-card {
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pr-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .pr-card:nth-child(1)::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+        .pr-card:nth-child(2)::before { background: linear-gradient(90deg, #f093fb, #f5576c); }
+        .pr-card:nth-child(3)::before { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+        .pr-card:nth-child(4)::before { background: linear-gradient(90deg, #43e97b, #38f9d7); }
+
+        .pr-exercise {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .pr-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .pr-unit {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .pr-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 9px;
+            padding: 3px 8px;
+            border-radius: 100px;
+            background: linear-gradient(135deg, var(--success), #16a34a);
+            color: #fff;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Chart Section */
+        .chart-section {
+            margin-bottom: 28px;
+        }
+
+        .chart-card {
+            padding: 24px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .chart-trend {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .chart-trend-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background: rgba(34, 197, 94, 0.2);
+            border-radius: 50%;
+            font-size: 10px;
+        }
+
+        .chart-area {
+            height: 140px;
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-gradient-line {
+            fill: none;
+            stroke: url(#lineGradient);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.5));
+        }
+
+        .chart-gradient-area {
+            fill: url(#areaGradient);
+        }
+
+        .chart-dot {
+            fill: #fff;
+            filter: drop-shadow(0 0 6px rgba(102, 126, 234, 0.8));
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        /* Muscle Balance */
+        .balance-section {
+            margin-bottom: 28px;
+        }
+
+        .balance-card {
+            padding: 24px;
+        }
+
+        .balance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .balance-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .balance-ratio {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .balance-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .balance-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .balance-label {
+            width: 50px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .balance-track {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .balance-fill {
+            height: 100%;
+            border-radius: 100px;
+            transition: width 0.5s ease;
+        }
+
+        .balance-fill.push {
+            width: 65%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        .balance-fill.pull {
+            width: 72%;
+            background: linear-gradient(90deg, #f093fb, #f5576c);
+        }
+        .balance-fill.legs {
+            width: 45%;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+        }
+
+        .balance-value {
+            width: 50px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
+        /* Workouts */
+        .workouts-section {
+            margin-bottom: 28px;
+        }
+
+        .workout-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .workout-item {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .workout-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .workout-icon.pull { background: linear-gradient(135deg, rgba(240, 147, 251, 0.2), rgba(245, 87, 108, 0.2)); }
+        .workout-icon.push { background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2)); }
+        .workout-icon.legs { background: linear-gradient(135deg, rgba(79, 172, 254, 0.2), rgba(0, 242, 254, 0.2)); }
+
+        .workout-info {
+            flex: 1;
+        }
+
+        .workout-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .workout-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .workout-volume {
+            text-align: right;
+        }
+
+        .workout-volume-value {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .workout-volume-label {
+            font-size: 10px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+        }
+
+        /* Insight */
+        .insight-section {
+            margin-bottom: 28px;
+        }
+
+        .insight-card {
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .insight-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .insight-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .insight-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .insight-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .insight-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 14px 28px;
+            display: flex;
+            gap: 28px;
+            z-index: 100;
+        }
+
+        .nav-item {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            background: var(--accent-gradient);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-item:hover:not(.active) {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 380px) {
+            .stats-row {
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 14px 10px;
+            }
+
+            .stat-value {
+                font-size: 22px;
+            }
+
+            .pr-grid {
+                gap: 10px;
+            }
+
+            .pr-card {
+                padding: 16px;
+            }
+
+            .pr-value {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="avatar">S</div>
+            <h1 class="title">Welcome back, Steven</h1>
+            <p class="subtitle">Let's crush today's workout</p>
+            <div class="streak-container">
+                <div class="streak-pill">
+                    <span class="streak-fire">🔥</span>
+                    <span>12 day streak</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="stats-row">
+            <div class="stat-card glass">
+                <div class="stat-icon">🏋️</div>
+                <div class="stat-value">4</div>
+                <div class="stat-label">This Week</div>
+            </div>
+            <div class="stat-card glass">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-value">23</div>
+                <div class="stat-label">Total PRs</div>
+            </div>
+            <div class="stat-card glass">
+                <div class="stat-icon">📈</div>
+                <div class="stat-value">47</div>
+                <div class="stat-label">Workouts</div>
+            </div>
+        </div>
+
+        <section class="pr-section">
+            <div class="section-header">
+                <h2 class="section-title">Personal Records</h2>
+                <span class="section-badge">2 new</span>
+            </div>
+            <div class="pr-grid">
+                <div class="pr-card glass">
+                    <span class="pr-badge">New</span>
+                    <div class="pr-exercise">Weighted Pull-up</div>
+                    <div class="pr-value">+50</div>
+                    <div class="pr-unit">lbs · 5 reps</div>
+                </div>
+                <div class="pr-card glass">
+                    <div class="pr-exercise">Lat Pulldown</div>
+                    <div class="pr-value">180</div>
+                    <div class="pr-unit">lbs · 12 reps</div>
+                </div>
+                <div class="pr-card glass">
+                    <div class="pr-exercise">Bulgarian Split</div>
+                    <div class="pr-value">60</div>
+                    <div class="pr-unit">lbs · 8 each</div>
+                </div>
+                <div class="pr-card glass">
+                    <span class="pr-badge">New</span>
+                    <div class="pr-exercise">Neck Curl</div>
+                    <div class="pr-value">35</div>
+                    <div class="pr-unit">lbs · 15 reps</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="chart-section">
+            <div class="chart-card glass">
+                <div class="chart-header">
+                    <div class="chart-title">Pull-up Progress</div>
+                    <div class="chart-trend">
+                        <span class="chart-trend-icon">↑</span>
+                        +12%
+                    </div>
+                </div>
+                <div class="chart-area">
+                    <svg class="chart-svg" viewBox="0 0 400 140" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#667eea" />
+                                <stop offset="100%" style="stop-color:#764ba2" />
+                            </linearGradient>
+                            <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.3" />
+                                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+                        <path class="chart-gradient-area" d="M0,120 C40,115 60,105 100,95 C140,85 160,80 200,70 C240,60 260,45 300,35 C340,25 360,20 400,15 L400,140 L0,140 Z" />
+                        <path class="chart-gradient-line" d="M0,120 C40,115 60,105 100,95 C140,85 160,80 200,70 C240,60 260,45 300,35 C340,25 360,20 400,15" />
+                        <circle class="chart-dot" cx="400" cy="15" r="5" />
+                    </svg>
+                </div>
+                <div class="chart-labels">
+                    <span>Oct</span>
+                    <span>Nov</span>
+                    <span>Dec</span>
+                    <span>Jan</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="balance-section">
+            <div class="balance-card glass">
+                <div class="balance-header">
+                    <div class="balance-title">Volume Balance</div>
+                    <div class="balance-ratio">Push/Pull: 0.9</div>
+                </div>
+                <div class="balance-bars">
+                    <div class="balance-item">
+                        <span class="balance-label">Push</span>
+                        <div class="balance-track">
+                            <div class="balance-fill push"></div>
+                        </div>
+                        <span class="balance-value">12.4k</span>
+                    </div>
+                    <div class="balance-item">
+                        <span class="balance-label">Pull</span>
+                        <div class="balance-track">
+                            <div class="balance-fill pull"></div>
+                        </div>
+                        <span class="balance-value">13.8k</span>
+                    </div>
+                    <div class="balance-item">
+                        <span class="balance-label">Legs</span>
+                        <div class="balance-track">
+                            <div class="balance-fill legs"></div>
+                        </div>
+                        <span class="balance-value">8.6k</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="workouts-section">
+            <div class="section-header">
+                <h2 class="section-title">Recent Workouts</h2>
+            </div>
+            <div class="workout-list">
+                <div class="workout-item glass">
+                    <div class="workout-icon pull">💪</div>
+                    <div class="workout-info">
+                        <div class="workout-name">Pull Day</div>
+                        <div class="workout-meta">Today · 52 min · 6 exercises</div>
+                    </div>
+                    <div class="workout-volume">
+                        <div class="workout-volume-value">8,240 lbs</div>
+                        <div class="workout-volume-label">Volume</div>
+                    </div>
+                </div>
+                <div class="workout-item glass">
+                    <div class="workout-icon push">🔥</div>
+                    <div class="workout-info">
+                        <div class="workout-name">Push Day</div>
+                        <div class="workout-meta">Yesterday · 48 min · 5 exercises</div>
+                    </div>
+                    <div class="workout-volume">
+                        <div class="workout-volume-value">7,650 lbs</div>
+                        <div class="workout-volume-label">Volume</div>
+                    </div>
+                </div>
+                <div class="workout-item glass">
+                    <div class="workout-icon legs">🦵</div>
+                    <div class="workout-info">
+                        <div class="workout-name">Legs</div>
+                        <div class="workout-meta">2 days ago · 55 min · 4 exercises</div>
+                    </div>
+                    <div class="workout-volume">
+                        <div class="workout-volume-value">9,120 lbs</div>
+                        <div class="workout-volume-label">Volume</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="insight-section">
+            <div class="insight-card glass">
+                <div class="insight-header">
+                    <div class="insight-icon">✨</div>
+                    <span class="insight-label">Weekly Insight</span>
+                </div>
+                <div class="insight-title">You're on fire!</div>
+                <div class="insight-text">Pull volume is up 15% this week. At this rate, you'll hit a new weighted pull-up PR within 2 weeks. Keep pushing!</div>
+            </div>
+        </section>
+    </div>
+
+    <nav class="bottom-nav glass">
+        <div class="nav-item active">🏠</div>
+        <div class="nav-item">📊</div>
+        <div class="nav-item">📝</div>
+        <div class="nav-item">⚙️</div>
+    </nav>
+</body>
+</html>

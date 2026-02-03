@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gains - Glass Design</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            color: #fff;
+            padding: 30px 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        /* Glass card */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header p { color: rgba(255,255,255,0.5); }
+        .badges { display: flex; justify-content: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+        .badge {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .badge.green { background: rgba(48, 209, 88, 0.2); border-color: rgba(48, 209, 88, 0.3); }
+        
+        /* Stats grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .stat-card .icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+        .stat-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 4px;
+        }
+        
+        /* PR cards */
+        .pr-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .pr-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .pr-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .pr-icon.blue { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .pr-icon.green { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .pr-icon.orange { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .pr-icon.purple { background: linear-gradient(135deg, #4776E6, #8E54E9); }
+        .pr-info { flex: 1; }
+        .pr-name { font-weight: 500; font-size: 0.95rem; }
+        .pr-value { 
+            font-size: 1.3rem; 
+            font-weight: 700;
+            color: rgba(255,255,255,0.9);
+        }
+        .pr-date { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+        
+        /* Chart */
+        .chart-card { }
+        .chart-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .chart-header h3 { font-size: 1rem; font-weight: 600; }
+        .chart-trend {
+            font-size: 0.8rem;
+            color: #38ef7d;
+            background: rgba(56, 239, 125, 0.15);
+            padding: 4px 12px;
+            border-radius: 100px;
+        }
+        .chart-area {
+            height: 150px;
+            background: linear-gradient(180deg, rgba(102, 126, 234, 0.3) 0%, transparent 100%);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .chart-line {
+            position: absolute;
+            bottom: 20px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            border-radius: 2px;
+            transform: rotate(-5deg);
+        }
+        
+        /* Workouts */
+        .workout-list { }
+        .workout-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .workout-item:last-child { border-bottom: none; }
+        .workout-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 16px;
+        }
+        .workout-dot.mon { background: #667eea; }
+        .workout-dot.wed { background: #38ef7d; }
+        .workout-dot.fri { background: #f093fb; }
+        .workout-info { flex: 1; }
+        .workout-date { font-weight: 500; }
+        .workout-exercises { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
+        .workout-tag {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 100px;
+            background: rgba(56, 239, 125, 0.15);
+            color: #38ef7d;
+        }
+        
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .pr-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Steven's Gains</h1>
+            <p>Tracking progress since September 2025</p>
+            <div class="badges">
+                <span class="badge green">🔥 22 Week Streak</span>
+                <span class="badge">💪 65 Workouts</span>
+                <span class="badge">📈 12 PRs</span>
+            </div>
+        </header>
+        
+        <div class="stats-grid">
+            <div class="glass stat-card">
+                <div class="icon">🎯</div>
+                <div class="value">2/3</div>
+                <div class="label">This Week</div>
+            </div>
+            <div class="glass stat-card">
+                <div class="icon">📊</div>
+                <div class="value">42.5k</div>
+                <div class="label">Weekly Volume</div>
+            </div>
+            <div class="glass stat-card">
+                <div class="icon">⚡</div>
+                <div class="value">+8%</div>
+                <div class="label">vs Last Week</div>
+            </div>
+        </div>
+        
+        <div class="glass" style="margin-bottom: 20px;">
+            <div class="chart-header">
+                <h3>📈 Pull-up Progress</h3>
+                <span class="chart-trend">↑ 55% overall</span>
+            </div>
+            <div class="chart-area">
+                <div class="chart-line"></div>
+            </div>
+        </div>
+        
+        <div class="glass">
+            <h3 style="margin-bottom: 20px; font-size: 1rem;">🏆 Personal Records</h3>
+            <div class="pr-grid">
+                <div class="pr-card">
+                    <div class="pr-icon blue">💪</div>
+                    <div class="pr-info">
+                        <div class="pr-name">Weighted Pull-ups</div>
+                        <div class="pr-value">70 × 7</div>
+                        <div class="pr-date">Nov 10, 2025</div>
+                    </div>
+                </div>
+                <div class="pr-card">
+                    <div class="pr-icon green">🎯</div>
+                    <div class="pr-info">
+                        <div class="pr-name">Lat Pull</div>
+                        <div class="pr-value">250 × 7</div>
+                        <div class="pr-date">Dec 5, 2025</div>
+                    </div>
+                </div>
+                <div class="pr-card">
+                    <div class="pr-icon orange">🔥</div>
+                    <div class="pr-info">
+                        <div class="pr-name">DB Press</div>
+                        <div class="pr-value">75 × 12</div>
+                        <div class="pr-date">Jan 30, 2026</div>
+                    </div>
+                </div>
+                <div class="pr-card">
+                    <div class="pr-icon purple">⚡</div>
+                    <div class="pr-info">
+                        <div class="pr-name">Bulgarian Split Squat</div>
+                        <div class="pr-value">40 × 12</div>
+                        <div class="pr-date">Jan 28, 2026</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass" style="margin-top: 20px;">
+            <h3 style="margin-bottom: 16px; font-size: 1rem;">📜 Recent Workouts</h3>
+            <div class="workout-list">
+                <div class="workout-item">
+                    <div class="workout-dot mon"></div>
+                    <div class="workout-info">
+                        <div class="workout-date">Monday, Feb 2</div>
+                        <div class="workout-exercises">Pull-ups 60×8 • Incline 75×7 • Neck 25×18</div>
+                    </div>
+                    <span class="workout-tag">🏆 PR</span>
+                </div>
+                <div class="workout-item">
+                    <div class="workout-dot fri"></div>
+                    <div class="workout-info">
+                        <div class="workout-date">Friday, Jan 30</div>
+                        <div class="workout-exercises">DB Press 75×12 • Lat Pull 235×7</div>
+                    </div>
+                </div>
+                <div class="workout-item">
+                    <div class="workout-dot wed"></div>
+                    <div class="workout-info">
+                        <div class="workout-date">Wednesday, Jan 28</div>
+                        <div class="workout-exercises">BSS 40×12 • Pistols BW×10 • Triceps 75×12</div>
+                    </div>
+                    <span class="workout-tag">🏆 PR</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

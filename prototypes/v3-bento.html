@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gains - Bento</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --card: #151515;
+            --card-hover: #1a1a1a;
+            --border: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --accent-orange: #FF9F0A;
+            --accent-orange-glow: rgba(255, 159, 10, 0.15);
+            --accent-purple: #BF5AF2;
+            --accent-purple-glow: rgba(191, 90, 242, 0.15);
+            --accent-blue: #0A84FF;
+            --accent-green: #30D158;
+            --accent-red: #FF453A;
+            --accent-yellow: #FFD60A;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Rounded', 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.4;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0 30px;
+        }
+
+        .header-left h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header-left p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .streak-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--accent-orange-glow);
+            border: 1px solid rgba(255, 159, 10, 0.3);
+            padding: 8px 14px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-orange);
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* Bento Grid */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .bento-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bento-card:hover {
+            background: var(--card-hover);
+            transform: scale(1.02);
+        }
+
+        .bento-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Card Sizes */
+        .span-2 { grid-column: span 2; }
+        .span-3 { grid-column: span 3; }
+        .span-4 { grid-column: span 4; }
+        .row-2 { grid-row: span 2; }
+
+        /* Stats Cards - First Row */
+        .stat-mini {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100px;
+        }
+
+        .stat-mini-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .stat-mini-icon.orange { background: var(--accent-orange-glow); }
+        .stat-mini-icon.purple { background: var(--accent-purple-glow); }
+        .stat-mini-icon.blue { background: rgba(10, 132, 255, 0.15); }
+        .stat-mini-icon.green { background: rgba(48, 209, 88, 0.15); }
+
+        .stat-mini-value {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .stat-mini-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Streak Card - Large */
+        .streak-card {
+            background: linear-gradient(135deg, #1a1205, #151515);
+            border: 1px solid rgba(255, 159, 10, 0.2);
+        }
+
+        .streak-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .streak-badge {
+            background: var(--accent-orange);
+            color: #000;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .streak-number {
+            font-size: 56px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .streak-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .streak-dots {
+            display: flex;
+            gap: 6px;
+            margin-top: 16px;
+        }
+
+        .streak-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(255, 159, 10, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .streak-dot.filled {
+            background: var(--accent-orange);
+        }
+
+        /* PR Card - Featured */
+        .pr-featured {
+            background: linear-gradient(135deg, #0d0a15, #151515);
+            border: 1px solid rgba(191, 90, 242, 0.2);
+        }
+
+        .pr-featured-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .pr-featured-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pr-new-badge {
+            background: linear-gradient(135deg, var(--accent-purple), #9945FF);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 100px;
+            text-transform: uppercase;
+        }
+
+        .pr-featured-value {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .pr-featured-unit {
+            font-size: 24px;
+            color: var(--accent-purple);
+        }
+
+        .pr-featured-exercise {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        /* PR Grid Mini */
+        .pr-mini {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 110px;
+        }
+
+        .pr-mini-exercise {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pr-mini-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .pr-mini-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Chart Card */
+        .chart-card {
+            min-height: 180px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .chart-trend {
+            font-size: 12px;
+            color: var(--accent-green);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .chart-area {
+            height: 80px;
+            position: relative;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-line {
+            fill: none;
+            stroke: var(--accent-purple);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+        }
+
+        .chart-fill {
+            fill: url(#bentoGradient);
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Volume Card */
+        .volume-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .volume-header {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .volume-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 12px 0 4px;
+        }
+
+        .volume-unit {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .volume-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+
+        .volume-bar-fill {
+            height: 100%;
+            width: 72%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 100px;
+        }
+
+        /* Workout List Card */
+        .workouts-card {
+            min-height: 200px;
+        }
+
+        .workouts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .workouts-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .workouts-see-all {
+            font-size: 12px;
+            color: var(--accent-orange);
+            font-weight: 500;
+        }
+
+        .workout-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .workout-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .workout-emoji {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .workout-info {
+            flex: 1;
+        }
+
+        .workout-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .workout-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .workout-vol {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Insight Card */
+        .insight-card {
+            background: linear-gradient(135deg, rgba(48, 209, 88, 0.1), rgba(10, 132, 255, 0.05));
+            border: 1px solid rgba(48, 209, 88, 0.2);
+        }
+
+        .insight-emoji {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .insight-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .insight-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Balance Card */
+        .balance-card {
+            min-height: 140px;
+        }
+
+        .balance-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .balance-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .balance-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .balance-label {
+            width: 45px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .balance-track {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .balance-fill {
+            height: 100%;
+            border-radius: 100px;
+        }
+
+        .balance-fill.push {
+            width: 55%;
+            background: var(--accent-orange);
+        }
+
+        .balance-fill.pull {
+            width: 68%;
+            background: var(--accent-purple);
+        }
+
+        .balance-fill.legs {
+            width: 42%;
+            background: var(--accent-blue);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--accent-orange), #FF6B00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 8px 32px rgba(255, 159, 10, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(255, 159, 10, 0.5);
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        /* Responsive */
+        @media (max-width: 420px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .span-3 { grid-column: span 2; }
+            .span-4 { grid-column: span 2; }
+
+            .streak-number {
+                font-size: 44px;
+            }
+
+            .pr-featured-value {
+                font-size: 40px;
+            }
+
+            .stat-mini-value {
+                font-size: 28px;
+            }
+
+            .header-left h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1>Hey, Steven</h1>
+                <p>Monday, January 27</p>
+            </div>
+            <div class="header-right">
+                <div class="streak-chip">
+                    <span>🔥</span>
+                    <span>12</span>
+                </div>
+                <div class="avatar">S</div>
+            </div>
+        </header>
+
+        <div class="bento-grid">
+            <!-- Row 1: Stats + Streak -->
+            <div class="bento-card stat-mini">
+                <div class="stat-mini-icon orange">💪</div>
+                <div>
+                    <div class="stat-mini-value">4</div>
+                    <div class="stat-mini-label">This week</div>
+                </div>
+            </div>
+
+            <div class="bento-card stat-mini">
+                <div class="stat-mini-icon purple">🏆</div>
+                <div>
+                    <div class="stat-mini-value">23</div>
+                    <div class="stat-mini-label">Total PRs</div>
+                </div>
+            </div>
+
+            <div class="bento-card streak-card span-2 row-2">
+                <div class="streak-header">
+                    <span class="streak-badge">On Fire</span>
+                </div>
+                <div class="streak-number">12</div>
+                <div class="streak-label">day streak</div>
+                <div class="streak-dots">
+                    <div class="streak-dot filled">M</div>
+                    <div class="streak-dot filled">T</div>
+                    <div class="streak-dot filled">W</div>
+                    <div class="streak-dot filled">T</div>
+                    <div class="streak-dot">F</div>
+                    <div class="streak-dot">S</div>
+                    <div class="streak-dot">S</div>
+                </div>
+            </div>
+
+            <!-- Row 2: Featured PR + Mini Stats -->
+            <div class="bento-card pr-featured span-2">
+                <div class="pr-featured-header">
+                    <span class="pr-featured-label">Latest PR</span>
+                    <span class="pr-new-badge">New</span>
+                </div>
+                <div class="pr-featured-value">+50<span class="pr-featured-unit">lbs</span></div>
+                <div class="pr-featured-exercise">Weighted Pull-up · 5 reps</div>
+            </div>
+
+            <!-- Row 3: PR Minis -->
+            <div class="bento-card pr-mini">
+                <div class="pr-mini-exercise">Lat Pull</div>
+                <div class="pr-mini-value">180</div>
+                <div class="pr-mini-meta">lbs · 12 reps</div>
+            </div>
+
+            <div class="bento-card pr-mini">
+                <div class="pr-mini-exercise">BSS</div>
+                <div class="pr-mini-value">60</div>
+                <div class="pr-mini-meta">lbs · 8 each</div>
+            </div>
+
+            <div class="bento-card pr-mini">
+                <div class="pr-mini-exercise">Neck Curl</div>
+                <div class="pr-mini-value">35</div>
+                <div class="pr-mini-meta">lbs · 15 reps</div>
+            </div>
+
+            <div class="bento-card pr-mini">
+                <div class="pr-mini-exercise">Cable Row</div>
+                <div class="pr-mini-value">165</div>
+                <div class="pr-mini-meta">lbs · 10 reps</div>
+            </div>
+
+            <!-- Row 4: Chart + Volume -->
+            <div class="bento-card chart-card span-3">
+                <div class="chart-header">
+                    <span class="chart-title">Pull-up Progress</span>
+                    <span class="chart-trend">↑ 12%</span>
+                </div>
+                <div class="chart-area">
+                    <svg class="chart-svg" viewBox="0 0 300 80" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="bentoGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#BF5AF2;stop-opacity:0.4" />
+                                <stop offset="100%" style="stop-color:#BF5AF2;stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+                        <path class="chart-fill" d="M0,70 C30,65 50,55 75,50 C100,45 120,40 150,35 C180,30 200,20 225,15 C250,10 270,8 300,5 L300,80 L0,80 Z" />
+                        <path class="chart-line" d="M0,70 C30,65 50,55 75,50 C100,45 120,40 150,35 C180,30 200,20 225,15 C250,10 270,8 300,5" />
+                    </svg>
+                </div>
+                <div class="chart-labels">
+                    <span>Oct</span>
+                    <span>Nov</span>
+                    <span>Dec</span>
+                    <span>Jan</span>
+                </div>
+            </div>
+
+            <div class="bento-card volume-card">
+                <div class="volume-header">Weekly Vol</div>
+                <div class="volume-value">32k</div>
+                <div class="volume-unit">lbs lifted</div>
+                <div class="volume-bar">
+                    <div class="volume-bar-fill"></div>
+                </div>
+            </div>
+
+            <!-- Row 5: Workouts + Balance -->
+            <div class="bento-card workouts-card span-2">
+                <div class="workouts-header">
+                    <span class="workouts-title">Recent</span>
+                    <span class="workouts-see-all">See all →</span>
+                </div>
+                <div class="workout-row">
+                    <div class="workout-emoji">💪</div>
+                    <div class="workout-info">
+                        <div class="workout-name">Pull Day</div>
+                        <div class="workout-meta">Today · 52 min</div>
+                    </div>
+                    <div class="workout-vol">8.2k</div>
+                </div>
+                <div class="workout-row">
+                    <div class="workout-emoji">🔥</div>
+                    <div class="workout-info">
+                        <div class="workout-name">Push Day</div>
+                        <div class="workout-meta">Yesterday · 48 min</div>
+                    </div>
+                    <div class="workout-vol">7.6k</div>
+                </div>
+                <div class="workout-row">
+                    <div class="workout-emoji">🦵</div>
+                    <div class="workout-info">
+                        <div class="workout-name">Legs</div>
+                        <div class="workout-meta">2 days ago · 55 min</div>
+                    </div>
+                    <div class="workout-vol">9.1k</div>
+                </div>
+            </div>
+
+            <div class="bento-card balance-card span-2">
+                <div class="balance-title">Volume Split</div>
+                <div class="balance-items">
+                    <div class="balance-row">
+                        <span class="balance-label">Push</span>
+                        <div class="balance-track">
+                            <div class="balance-fill push"></div>
+                        </div>
+                    </div>
+                    <div class="balance-row">
+                        <span class="balance-label">Pull</span>
+                        <div class="balance-track">
+                            <div class="balance-fill pull"></div>
+                        </div>
+                    </div>
+                    <div class="balance-row">
+                        <span class="balance-label">Legs</span>
+                        <div class="balance-track">
+                            <div class="balance-fill legs"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 6: Insight -->
+            <div class="bento-card insight-card span-4">
+                <div class="insight-emoji">🎯</div>
+                <div class="insight-title">You're crushing it!</div>
+                <div class="insight-text">Pull volume is up 15% this week. Keep this up and you'll hit a new weighted pull-up PR soon. Your consistency is paying off.</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="fab">+</button>
+</body>
+</html>

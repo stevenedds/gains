@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE PIT // UNDERGROUND</title>
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Teko:wght@400;600;700&family=Staatliches&family=Special+Elite&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pit-black: #0a0908;
+            --concrete: #1a1918;
+            --concrete-light: #2a2826;
+            --rust: #4a3c32;
+            --blood-red: #8b0000;
+            --chalk-white: #d4d0c8;
+            --sweat-yellow: #c9a227;
+            --bruise-purple: #3d2844;
+            --tape-white: #e8e4dc;
+            --old-blood: #5c1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Teko', sans-serif;
+            background: var(--pit-black);
+            color: var(--chalk-white);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Chalk dust texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(ellipse at 20% 30%, rgba(212, 208, 200, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(212, 208, 200, 0.02) 0%, transparent 40%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Brick wall texture overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 30px,
+                rgba(0,0,0,0.1) 30px,
+                rgba(0,0,0,0.1) 31px
+            ),
+            repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 60px,
+                rgba(0,0,0,0.05) 60px,
+                rgba(0,0,0,0.05) 61px
+            );
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.3;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(180deg, var(--concrete) 0%, var(--pit-black) 100%);
+            padding: 20px;
+            position: relative;
+            border-bottom: 4px solid var(--blood-red);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                var(--blood-red) 20%,
+                var(--blood-red) 80%,
+                transparent 100%
+            );
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--blood-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            position: relative;
+        }
+
+        .logo-icon::before {
+            content: '👊';
+            font-size: 28px;
+            filter: grayscale(1);
+        }
+
+        .logo-text h1 {
+            font-family: 'Russo One', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 4px;
+            color: var(--chalk-white);
+            text-shadow: 3px 3px 0 var(--blood-red);
+        }
+
+        .logo-text span {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.75rem;
+            color: var(--sweat-yellow);
+            letter-spacing: 3px;
+        }
+
+        /* Fight Record Badge */
+        .fight-record {
+            background: var(--concrete);
+            border: 2px solid var(--rust);
+            padding: 12px 20px;
+            position: relative;
+        }
+
+        .fight-record::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 1px dashed var(--rust);
+            pointer-events: none;
+        }
+
+        .record-title {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.65rem;
+            color: var(--sweat-yellow);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .record-stats {
+            font-family: 'Staatliches', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+        }
+
+        .record-stats .wins { color: #4a9; }
+        .record-stats .losses { color: var(--blood-red); }
+
+        main {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Chalk scrawl section headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 35px 0 20px;
+            position: relative;
+        }
+
+        .section-header h2 {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            color: var(--chalk-white);
+            position: relative;
+            padding: 5px 15px;
+            background: var(--blood-red);
+            transform: skewX(-5deg);
+        }
+
+        .section-header h2 span {
+            display: inline-block;
+            transform: skewX(5deg);
+        }
+
+        .section-line {
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--rust) 0%, transparent 100%);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--concrete);
+            border: 2px solid var(--rust);
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--blood-red);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(139,0,0,0.1) 0%, transparent 70%);
+        }
+
+        .stat-label {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.7rem;
+            color: var(--sweat-yellow);
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-family: 'Staatliches', sans-serif;
+            font-size: 2.5rem;
+            color: var(--chalk-white);
+            line-height: 1;
+            text-shadow: 2px 2px 0 var(--pit-black);
+        }
+
+        .stat-unit {
+            font-family: 'Teko', sans-serif;
+            font-size: 0.8rem;
+            color: var(--rust);
+            letter-spacing: 1px;
+        }
+
+        /* PR Board - Fight Cards Style */
+        .pr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+        }
+
+        .pr-card {
+            background: var(--concrete);
+            border: 2px solid var(--rust);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pr-card.champion {
+            border-color: var(--sweat-yellow);
+        }
+
+        .pr-card.champion::before {
+            content: 'CHAMP';
+            position: absolute;
+            top: 10px;
+            right: -20px;
+            background: var(--sweat-yellow);
+            color: var(--pit-black);
+            font-family: 'Russo One', sans-serif;
+            font-size: 0.6rem;
+            padding: 3px 25px;
+            transform: rotate(45deg);
+            letter-spacing: 1px;
+        }
+
+        .pr-header {
+            background: var(--blood-red);
+            padding: 10px 15px;
+            transform: skewX(-3deg);
+            margin: -2px;
+        }
+
+        .pr-header-inner {
+            transform: skewX(3deg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pr-name {
+            font-family: 'Russo One', sans-serif;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .pr-category {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.6rem;
+            color: var(--sweat-yellow);
+        }
+
+        .pr-body {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .pr-weight {
+            font-family: 'Staatliches', sans-serif;
+            font-size: 2.5rem;
+            color: var(--chalk-white);
+            text-shadow: 2px 2px 0 var(--blood-red);
+        }
+
+        .pr-weight span {
+            font-size: 1rem;
+            color: var(--rust);
+        }
+
+        .pr-date {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.65rem;
+            color: var(--rust);
+        }
+
+        /* Round Timer Chart */
+        .chart-container {
+            background: var(--concrete);
+            border: 2px solid var(--rust);
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .chart-header {
+            background: linear-gradient(90deg, var(--blood-red) 0%, var(--old-blood) 100%);
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        .round-indicator {
+            font-family: 'Staatliches', sans-serif;
+            font-size: 1rem;
+            color: var(--sweat-yellow);
+        }
+
+        .chart-body {
+            padding: 20px;
+            height: 180px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 10px;
+        }
+
+        .round-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 40px;
+            background: linear-gradient(180deg, var(--blood-red) 0%, var(--old-blood) 100%);
+            position: relative;
+            border-top: 3px solid var(--sweat-yellow);
+        }
+
+        .bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Special Elite', cursive;
+            font-size: 0.6rem;
+            color: var(--chalk-white);
+        }
+
+        .round-label {
+            font-family: 'Staatliches', sans-serif;
+            font-size: 0.7rem;
+            color: var(--rust);
+        }
+
+        /* Fight Log */
+        .fight-log {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .fight-entry {
+            background: var(--concrete);
+            border: 2px solid var(--rust);
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .fight-entry::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--blood-red);
+        }
+
+        .fight-date {
+            background: var(--concrete-light);
+            padding: 15px;
+            min-width: 80px;
+            text-align: center;
+            border-right: 2px solid var(--rust);
+        }
+
+        .fight-day {
+            font-family: 'Staatliches', sans-serif;
+            font-size: 1.8rem;
+            color: var(--blood-red);
+            line-height: 1;
+        }
+
+        .fight-month {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.6rem;
+            color: var(--rust);
+        }
+
+        .fight-content {
+            flex: 1;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fight-type {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .fight-exercises {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.7rem;
+            color: var(--rust);
+            margin-top: 3px;
+        }
+
+        .fight-stats {
+            text-align: right;
+        }
+
+        .fight-tonnage {
+            font-family: 'Staatliches', sans-serif;
+            font-size: 1.4rem;
+            color: var(--sweat-yellow);
+        }
+
+        .fight-result {
+            display: inline-block;
+            background: var(--blood-red);
+            color: var(--chalk-white);
+            font-family: 'Russo One', sans-serif;
+            font-size: 0.55rem;
+            padding: 2px 8px;
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+
+        /* Corner Advice (Insights) */
+        .corner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .corner-card {
+            background: var(--concrete);
+            border: 2px solid var(--rust);
+            border-left: 5px solid var(--sweat-yellow);
+            padding: 15px;
+            position: relative;
+        }
+
+        .corner-card::before {
+            content: '"';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-family: Georgia, serif;
+            font-size: 3rem;
+            color: var(--rust);
+            opacity: 0.5;
+            line-height: 1;
+        }
+
+        .corner-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            padding-left: 25px;
+        }
+
+        .corner-value {
+            font-family: 'Staatliches', sans-serif;
+            font-size: 1.8rem;
+            color: var(--sweat-yellow);
+            margin-bottom: 5px;
+        }
+
+        .corner-text {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.75rem;
+            color: var(--rust);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            border-top: 4px solid var(--blood-red);
+            background: var(--concrete);
+        }
+
+        .footer-content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .footer-text {
+            font-family: 'Special Elite', cursive;
+            font-size: 0.75rem;
+            color: var(--rust);
+            letter-spacing: 2px;
+        }
+
+        .footer-motto {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1rem;
+            color: var(--blood-red);
+            margin-top: 10px;
+            letter-spacing: 3px;
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .logo-text h1 {
+                font-size: 1.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .fight-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .fight-stats {
+                text-align: left;
+            }
+        }
+
+        /* Blood splatter animation on champion cards */
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 5px var(--sweat-yellow); }
+            50% { box-shadow: 0 0 15px var(--sweat-yellow), 0 0 25px rgba(201, 162, 39, 0.3); }
+        }
+
+        .pr-card.champion {
+            animation: pulse-gold 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <div class="logo-text">
+                    <h1>THE PIT</h1>
+                    <span>BASEMENT IRON // EST. 2024</span>
+                </div>
+            </div>
+            <div class="fight-record">
+                <div class="record-title">FIGHT RECORD</div>
+                <div class="record-stats">
+                    <span class="wins">47</span> - <span class="losses">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="section-header">
+            <h2><span>TALE OF THE TAPE</span></h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Sessions/Week</div>
+                <div class="stat-value">5</div>
+                <div class="stat-unit">ROUNDS WON</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Tonnage</div>
+                <div class="stat-value">47.2K</div>
+                <div class="stat-unit">POUNDS CRUSHED</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">New PRs</div>
+                <div class="stat-value">12</div>
+                <div class="stat-unit">KNOCKOUTS</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Intensity</div>
+                <div class="stat-value">82%</div>
+                <div class="stat-unit">FIGHT MODE</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2><span>CHAMPIONSHIP LIFTS</span></h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="pr-grid">
+            <div class="pr-card champion">
+                <div class="pr-header">
+                    <div class="pr-header-inner">
+                        <div class="pr-name">Weighted Pull-Up</div>
+                        <div class="pr-category">BACK</div>
+                    </div>
+                </div>
+                <div class="pr-body">
+                    <div class="pr-weight">+90 <span>LBS</span></div>
+                    <div class="pr-date">JAN 15, 2024</div>
+                </div>
+            </div>
+            <div class="pr-card">
+                <div class="pr-header">
+                    <div class="pr-header-inner">
+                        <div class="pr-name">Lat Pulldown</div>
+                        <div class="pr-category">BACK</div>
+                    </div>
+                </div>
+                <div class="pr-body">
+                    <div class="pr-weight">185 <span>LBS</span></div>
+                    <div class="pr-date">JAN 12, 2024</div>
+                </div>
+            </div>
+            <div class="pr-card">
+                <div class="pr-header">
+                    <div class="pr-header-inner">
+                        <div class="pr-name">Bulgarian Split Squat</div>
+                        <div class="pr-category">LEGS</div>
+                    </div>
+                </div>
+                <div class="pr-body">
+                    <div class="pr-weight">70 <span>LBS</span></div>
+                    <div class="pr-date">JAN 10, 2024</div>
+                </div>
+            </div>
+            <div class="pr-card">
+                <div class="pr-header">
+                    <div class="pr-header-inner">
+                        <div class="pr-name">Neck Curl</div>
+                        <div class="pr-category">NECK</div>
+                    </div>
+                </div>
+                <div class="pr-body">
+                    <div class="pr-weight">45 <span>LBS</span></div>
+                    <div class="pr-date">JAN 08, 2024</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2><span>ROUND BY ROUND</span></h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title">WEEKLY TONNAGE</div>
+                <div class="round-indicator">8 ROUNDS</div>
+            </div>
+            <div class="chart-body">
+                <div class="round-bar">
+                    <div class="bar" style="height: 55%;" data-value="32K"></div>
+                    <div class="round-label">RD 1</div>
+                </div>
+                <div class="round-bar">
+                    <div class="bar" style="height: 62%;" data-value="35K"></div>
+                    <div class="round-label">RD 2</div>
+                </div>
+                <div class="round-bar">
+                    <div class="bar" style="height: 70%;" data-value="38K"></div>
+                    <div class="round-label">RD 3</div>
+                </div>
+                <div class="round-bar">
+                    <div class="bar" style="height: 48%;" data-value="28K"></div>
+                    <div class="round-label">RD 4</div>
+                </div>
+                <div class="round-bar">
+                    <div class="bar" style="height: 75%;" data-value="41K"></div>
+                    <div class="round-label">RD 5</div>
+                </div>
+                <div class="round-bar">
+                    <div class="bar" style="height: 82%;" data-value="44K"></div>
+                    <div class="round-label">RD 6</div>
+                </div>
+                <div class="round-bar">
+                    <div class="bar" style="height: 78%;" data-value="42K"></div>
+                    <div class="round-label">RD 7</div>
+                </div>
+                <div class="round-bar">
+                    <div class="bar" style="height: 92%;" data-value="47K"></div>
+                    <div class="round-label">RD 8</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2><span>FIGHT CARD</span></h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="fight-log">
+            <div class="fight-entry">
+                <div class="fight-date">
+                    <div class="fight-day">15</div>
+                    <div class="fight-month">JAN</div>
+                </div>
+                <div class="fight-content">
+                    <div>
+                        <div class="fight-type">PULL DAY</div>
+                        <div class="fight-exercises">Pull-ups, Rows, Lat Pulldown, Curls</div>
+                    </div>
+                    <div class="fight-stats">
+                        <div class="fight-tonnage">12,450 LBS</div>
+                        <div class="fight-result">TKO</div>
+                    </div>
+                </div>
+            </div>
+            <div class="fight-entry">
+                <div class="fight-date">
+                    <div class="fight-day">14</div>
+                    <div class="fight-month">JAN</div>
+                </div>
+                <div class="fight-content">
+                    <div>
+                        <div class="fight-type">PUSH DAY</div>
+                        <div class="fight-exercises">Bench, OHP, Dips, Tricep Ext</div>
+                    </div>
+                    <div class="fight-stats">
+                        <div class="fight-tonnage">10,820 LBS</div>
+                        <div class="fight-result">DECISION</div>
+                    </div>
+                </div>
+            </div>
+            <div class="fight-entry">
+                <div class="fight-date">
+                    <div class="fight-day">12</div>
+                    <div class="fight-month">JAN</div>
+                </div>
+                <div class="fight-content">
+                    <div>
+                        <div class="fight-type">LEG DAY</div>
+                        <div class="fight-exercises">BSS, RDL, Leg Press, Calf Raises</div>
+                    </div>
+                    <div class="fight-stats">
+                        <div class="fight-tonnage">15,200 LBS</div>
+                        <div class="fight-result">KO</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2><span>CORNER ADVICE</span></h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="corner-grid">
+            <div class="corner-card">
+                <div class="corner-title">VOLUME TREND</div>
+                <div class="corner-value">+18%</div>
+                <div class="corner-text">You're throwing more punches than last month. Keep that pressure up. Don't let 'em breathe.</div>
+            </div>
+            <div class="corner-card">
+                <div class="corner-title">PR VELOCITY</div>
+                <div class="corner-value">3.2/wk</div>
+                <div class="corner-text">Knockouts per week. You're on a tear kid. Stay hungry, stay humble.</div>
+            </div>
+            <div class="corner-card">
+                <div class="corner-title">PUSH/PULL</div>
+                <div class="corner-value">0.95</div>
+                <div class="corner-text">Good balance. Can't have a killer right hook without the left jab. Keep it even.</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-text">THE PIT // WHERE CHAMPIONS ARE FORGED</div>
+            <div class="footer-motto">"PAIN IS TEMPORARY. GLORY IS FOREVER."</div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAINS.SYS // TERMINAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Fira+Code:wght@400;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --term-black: #0a0a0a;
+            --term-dark: #0d1a0d;
+            --term-bg: #0a100a;
+            --phosphor-green: #00ff41;
+            --phosphor-dim: #00aa2a;
+            --phosphor-dark: #005515;
+            --amber: #ffb000;
+            --amber-dim: #996800;
+            --scanline: rgba(0, 255, 65, 0.03);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background: var(--term-black);
+            color: var(--phosphor-green);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* CRT Effects */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 2px,
+                var(--scanline) 2px,
+                var(--scanline) 4px
+            );
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 0%,
+                rgba(0, 0, 0, 0.3) 80%,
+                rgba(0, 0, 0, 0.6) 100%
+            );
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        /* Matrix Rain Canvas */
+        #matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        /* Terminal Container */
+        .terminal {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Terminal Header */
+        .term-header {
+            border: 1px solid var(--phosphor-dim);
+            background: var(--term-dark);
+            margin-bottom: 20px;
+        }
+
+        .term-titlebar {
+            background: var(--phosphor-dark);
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--phosphor-dim);
+        }
+
+        .term-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .term-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid var(--phosphor-dim);
+        }
+
+        .term-btn.close { background: #ff5f56; border-color: #e0443e; }
+        .term-btn.min { background: #ffbd2e; border-color: #dea123; }
+        .term-btn.max { background: #27c93f; border-color: #1aab29; }
+
+        .term-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--phosphor-dim);
+            letter-spacing: 1px;
+        }
+
+        .term-body {
+            padding: 15px;
+        }
+
+        .boot-sequence {
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+
+        .boot-line {
+            font-size: 0.9rem;
+            color: var(--phosphor-dim);
+            margin-bottom: 2px;
+        }
+
+        .boot-line.success { color: var(--phosphor-green); }
+        .boot-line.highlight { color: var(--amber); }
+
+        .welcome-art {
+            font-size: 0.8rem;
+            color: var(--phosphor-green);
+            margin: 20px 0;
+            line-height: 1.2;
+        }
+
+        .user-info {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .info-block {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-label {
+            color: var(--phosphor-dim);
+            font-size: 1rem;
+        }
+
+        .info-value {
+            color: var(--amber);
+            font-size: 1.2rem;
+        }
+
+        /* Command Prompt Style Sections */
+        .cmd-section {
+            margin-bottom: 25px;
+        }
+
+        .cmd-prompt {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .prompt-user {
+            color: var(--phosphor-green);
+            font-size: 1.1rem;
+        }
+
+        .prompt-path {
+            color: var(--phosphor-dim);
+            font-size: 1.1rem;
+        }
+
+        .prompt-symbol {
+            color: var(--amber);
+            font-size: 1.1rem;
+        }
+
+        .prompt-cmd {
+            color: var(--phosphor-green);
+            font-size: 1.1rem;
+        }
+
+        /* Stats Output */
+        .stats-output {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding-left: 20px;
+            border-left: 1px solid var(--phosphor-dark);
+            margin-left: 10px;
+        }
+
+        .stat-row {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .stat-key {
+            color: var(--phosphor-dim);
+            font-size: 0.9rem;
+        }
+
+        .stat-val {
+            font-size: 2rem;
+            color: var(--phosphor-green);
+            text-shadow: 0 0 10px var(--phosphor-green);
+        }
+
+        .stat-unit {
+            color: var(--phosphor-dark);
+            font-size: 0.9rem;
+        }
+
+        /* PR Table */
+        .pr-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-left: 10px;
+            font-size: 1rem;
+        }
+
+        .pr-table th {
+            text-align: left;
+            color: var(--phosphor-dim);
+            border-bottom: 1px solid var(--phosphor-dark);
+            padding: 8px 15px 8px 0;
+            font-weight: normal;
+        }
+
+        .pr-table td {
+            padding: 8px 15px 8px 0;
+            border-bottom: 1px dashed var(--phosphor-dark);
+        }
+
+        .pr-table tr:hover td {
+            background: var(--term-dark);
+        }
+
+        .pr-name {
+            color: var(--phosphor-green);
+        }
+
+        .pr-weight {
+            color: var(--amber);
+            text-shadow: 0 0 5px var(--amber);
+            font-size: 1.2rem;
+        }
+
+        .pr-date {
+            color: var(--phosphor-dim);
+        }
+
+        .pr-flag {
+            color: var(--phosphor-green);
+            font-size: 0.85rem;
+        }
+
+        .pr-flag.new {
+            color: var(--amber);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* ASCII Chart */
+        .ascii-chart {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: var(--phosphor-green);
+            margin-left: 10px;
+            line-height: 1.4;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .chart-bar {
+            color: var(--phosphor-green);
+        }
+
+        .chart-label {
+            color: var(--phosphor-dim);
+        }
+
+        .chart-value {
+            color: var(--amber);
+        }
+
+        /* Workout Log */
+        .log-entry {
+            margin-left: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px dashed var(--phosphor-dark);
+            background: var(--term-dark);
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .log-date {
+            color: var(--amber);
+            font-size: 1rem;
+        }
+
+        .log-type {
+            color: var(--phosphor-green);
+            font-size: 1.1rem;
+        }
+
+        .log-exercises {
+            color: var(--phosphor-dim);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .log-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+        }
+
+        .log-stat {
+            color: var(--phosphor-dim);
+        }
+
+        .log-stat span {
+            color: var(--phosphor-green);
+        }
+
+        /* Insights */
+        .insight-block {
+            margin-left: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-left: 2px solid var(--amber);
+            background: var(--term-dark);
+        }
+
+        .insight-title {
+            color: var(--amber);
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .insight-value {
+            color: var(--phosphor-green);
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px var(--phosphor-green);
+            margin-bottom: 5px;
+        }
+
+        .insight-text {
+            color: var(--phosphor-dim);
+            font-size: 0.9rem;
+        }
+
+        /* Cursor */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: var(--phosphor-green);
+            animation: cursor-blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        @keyframes cursor-blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Footer */
+        .term-footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--phosphor-dark);
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--phosphor-dim);
+            font-size: 0.85rem;
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .terminal {
+                padding: 10px;
+            }
+
+            .user-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .ascii-chart {
+                font-size: 0.6rem;
+            }
+
+            .stats-output {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Flicker effect */
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.8; }
+            94% { opacity: 1; }
+            95% { opacity: 0.9; }
+            96% { opacity: 1; }
+        }
+
+        .terminal {
+            animation: flicker 5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-rain"></canvas>
+
+    <div class="terminal">
+        <div class="term-header">
+            <div class="term-titlebar">
+                <div class="term-buttons">
+                    <div class="term-btn close"></div>
+                    <div class="term-btn min"></div>
+                    <div class="term-btn max"></div>
+                </div>
+                <div class="term-title">gains@localhost: ~/fitness</div>
+                <div></div>
+            </div>
+            <div class="term-body">
+                <div class="boot-sequence">
+                    <div class="boot-line">GAINS.SYS v4.2.0 - Fitness Tracking Terminal</div>
+                    <div class="boot-line">Copyright (c) 2024 Iron Protocol</div>
+                    <div class="boot-line">-------------------------------------------</div>
+                    <div class="boot-line success">[OK] Loading muscle memory modules...</div>
+                    <div class="boot-line success">[OK] Initializing PR database...</div>
+                    <div class="boot-line success">[OK] Syncing workout logs...</div>
+                    <div class="boot-line highlight">[**] System ready. All gains accounted for.</div>
+                </div>
+
+                <pre class="welcome-art">
+   ██████╗  █████╗ ██╗███╗   ██╗███████╗
+  ██╔════╝ ██╔══██╗██║████╗  ██║██╔════╝
+  ██║  ███╗███████║██║██╔██╗ ██║███████╗
+  ██║   ██║██╔══██║██║██║╚██╗██║╚════██║
+  ╚██████╔╝██║  ██║██║██║ ╚████║███████║
+   ╚═════╝ ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚══════╝
+                                .SYS
+                </pre>
+
+                <div class="user-info">
+                    <div class="info-block">
+                        <span class="info-label">USER:</span>
+                        <span class="info-value">STEVEN</span>
+                    </div>
+                    <div class="info-block">
+                        <span class="info-label">STREAK:</span>
+                        <span class="info-value">47 DAYS</span>
+                    </div>
+                    <div class="info-block">
+                        <span class="info-label">STATUS:</span>
+                        <span class="info-value">ACTIVE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cmd-section">
+            <div class="cmd-prompt">
+                <span class="prompt-user">gains</span>
+                <span class="prompt-path">~/stats</span>
+                <span class="prompt-symbol">$</span>
+                <span class="prompt-cmd">cat overview.txt</span>
+            </div>
+            <div class="stats-output">
+                <div class="stat-row">
+                    <span class="stat-key">sessions_per_week:</span>
+                    <span class="stat-val">5</span>
+                    <span class="stat-unit">workouts</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-key">total_tonnage:</span>
+                    <span class="stat-val">47.2K</span>
+                    <span class="stat-unit">lbs</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-key">pr_count_month:</span>
+                    <span class="stat-val">12</span>
+                    <span class="stat-unit">records</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-key">avg_intensity:</span>
+                    <span class="stat-val">82%</span>
+                    <span class="stat-unit">of 1RM</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="cmd-section">
+            <div class="cmd-prompt">
+                <span class="prompt-user">gains</span>
+                <span class="prompt-path">~/prs</span>
+                <span class="prompt-symbol">$</span>
+                <span class="prompt-cmd">ls -la --sort=weight</span>
+            </div>
+            <table class="pr-table">
+                <thead>
+                    <tr>
+                        <th>LIFT</th>
+                        <th>WEIGHT</th>
+                        <th>DATE</th>
+                        <th>FLAG</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="pr-name">weighted_pullup</td>
+                        <td class="pr-weight">+90 lbs</td>
+                        <td class="pr-date">2024-01-15</td>
+                        <td class="pr-flag new">[NEW]</td>
+                    </tr>
+                    <tr>
+                        <td class="pr-name">lat_pulldown</td>
+                        <td class="pr-weight">185 lbs</td>
+                        <td class="pr-date">2024-01-12</td>
+                        <td class="pr-flag">[ - ]</td>
+                    </tr>
+                    <tr>
+                        <td class="pr-name">bulgarian_split_squat</td>
+                        <td class="pr-weight">70 lbs</td>
+                        <td class="pr-date">2024-01-10</td>
+                        <td class="pr-flag">[ - ]</td>
+                    </tr>
+                    <tr>
+                        <td class="pr-name">neck_curl</td>
+                        <td class="pr-weight">45 lbs</td>
+                        <td class="pr-date">2024-01-08</td>
+                        <td class="pr-flag">[ - ]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cmd-section">
+            <div class="cmd-prompt">
+                <span class="prompt-user">gains</span>
+                <span class="prompt-path">~/analytics</span>
+                <span class="prompt-symbol">$</span>
+                <span class="prompt-cmd">./plot_tonnage.sh --weeks=8</span>
+            </div>
+            <pre class="ascii-chart">
+<span class="chart-label">WEEKLY TONNAGE (lbs)</span>
+
+<span class="chart-value">47K</span> ┤                                        ████
+<span class="chart-value">44K</span> ┤                              ████     ████
+<span class="chart-value">41K</span> ┤                    ████     ████     ████
+<span class="chart-value">38K</span> ┤          ████     ████     ████     ████
+<span class="chart-value">35K</span> ┤    ████  ████     ████     ████     ████
+<span class="chart-value">32K</span> ┤   ████  ████     ████     ████     ████
+<span class="chart-value">28K</span> ┤   ████  ████     ████████████████████████
+<span class="chart-value">   </span> ┼────────────────────────────────────────────
+<span class="chart-label">      W1    W2    W3    W4    W5    W6    W7    W8</span>
+            </pre>
+        </div>
+
+        <div class="cmd-section">
+            <div class="cmd-prompt">
+                <span class="prompt-user">gains</span>
+                <span class="prompt-path">~/logs</span>
+                <span class="prompt-symbol">$</span>
+                <span class="prompt-cmd">tail -3 workouts.log</span>
+            </div>
+            <div class="log-entry">
+                <div class="log-header">
+                    <span class="log-date">[2024-01-15]</span>
+                    <span class="log-type">PULL_DAY</span>
+                </div>
+                <div class="log-exercises">exercises: pull-ups, rows, lat_pulldown, curls</div>
+                <div class="log-stats">
+                    <span class="log-stat">tonnage: <span>12,450 lbs</span></span>
+                    <span class="log-stat">duration: <span>68 min</span></span>
+                    <span class="log-stat">prs: <span>1</span></span>
+                </div>
+            </div>
+            <div class="log-entry">
+                <div class="log-header">
+                    <span class="log-date">[2024-01-14]</span>
+                    <span class="log-type">PUSH_DAY</span>
+                </div>
+                <div class="log-exercises">exercises: bench, ohp, dips, tricep_ext</div>
+                <div class="log-stats">
+                    <span class="log-stat">tonnage: <span>10,820 lbs</span></span>
+                    <span class="log-stat">duration: <span>55 min</span></span>
+                    <span class="log-stat">prs: <span>0</span></span>
+                </div>
+            </div>
+            <div class="log-entry">
+                <div class="log-header">
+                    <span class="log-date">[2024-01-12]</span>
+                    <span class="log-type">LEG_DAY</span>
+                </div>
+                <div class="log-exercises">exercises: bss, rdl, leg_press, calf_raises</div>
+                <div class="log-stats">
+                    <span class="log-stat">tonnage: <span>15,200 lbs</span></span>
+                    <span class="log-stat">duration: <span>72 min</span></span>
+                    <span class="log-stat">prs: <span>0</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="cmd-section">
+            <div class="cmd-prompt">
+                <span class="prompt-user">gains</span>
+                <span class="prompt-path">~/insights</span>
+                <span class="prompt-symbol">$</span>
+                <span class="prompt-cmd">./analyze.py --verbose</span>
+            </div>
+            <div class="insight-block">
+                <div class="insight-title"># VOLUME_TREND</div>
+                <div class="insight-value">+18%</div>
+                <div class="insight-text">Weekly tonnage increased from last month. Progressive overload on track.</div>
+            </div>
+            <div class="insight-block">
+                <div class="insight-title"># PR_VELOCITY</div>
+                <div class="insight-value">3.2/wk</div>
+                <div class="insight-text">Personal records per week. Strength adaptation rate: optimal.</div>
+            </div>
+            <div class="insight-block">
+                <div class="insight-title"># PUSH_PULL_RATIO</div>
+                <div class="insight-value">0.95</div>
+                <div class="insight-text">Near equilibrium. Muscle balance within acceptable parameters.</div>
+            </div>
+        </div>
+
+        <div class="cmd-section">
+            <div class="cmd-prompt">
+                <span class="prompt-user">gains</span>
+                <span class="prompt-path">~</span>
+                <span class="prompt-symbol">$</span>
+                <span class="prompt-cmd"></span>
+                <span class="cursor"></span>
+            </div>
+        </div>
+
+        <div class="term-footer">
+            <div class="footer-text">GAINS.SYS // Connection secure // Last sync: 08:42:17 UTC</div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrix-rain');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = '0123456789ABCDEF+-*/=[]{}()<>|';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * canvas.height / fontSize;
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff41';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 50);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

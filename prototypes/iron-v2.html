@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TACTICAL FITNESS // OPERATOR DASHBOARD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Saira+Stencil+One&family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --od-dark: #1a1f14;
+            --od-med: #2a3020;
+            --od-light: #3a422c;
+            --od-accent: #4a5238;
+            --tan: #c9b896;
+            --tan-dark: #8a7b5a;
+            --ranger-green: #4a5d23;
+            --coyote: #8b7355;
+            --black: #0d0f0a;
+            --text-primary: #d4cfc4;
+            --text-dim: #7a7a6a;
+            --warning-red: #8b0000;
+            --status-green: #228b22;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Barlow Condensed', sans-serif;
+            background: var(--od-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Canvas texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h1v1H0zM2 0h1v1H2zM4 0h1v1H4z' fill='%23ffffff' fill-opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Header */
+        header {
+            background: var(--black);
+            border-bottom: 3px solid var(--ranger-green);
+            position: relative;
+        }
+
+        .classification-bar {
+            background: var(--warning-red);
+            color: var(--tan);
+            text-align: center;
+            padding: 4px;
+            font-family: 'Saira Stencil One', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+        }
+
+        .header-content {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 55px;
+            height: 55px;
+            background: var(--od-med);
+            border: 2px solid var(--tan-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .logo-icon::before {
+            content: '★';
+            font-size: 24px;
+            color: var(--tan);
+        }
+
+        .logo-text h1 {
+            font-family: 'Saira Stencil One', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 3px;
+            color: var(--tan);
+        }
+
+        .logo-text span {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+        }
+
+        /* Dog Tag */
+        .dog-tag {
+            background: linear-gradient(145deg, #888 0%, #666 50%, #888 100%);
+            border: 1px solid #999;
+            border-radius: 8px 8px 20px 20px;
+            padding: 12px 20px;
+            position: relative;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .dog-tag::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 6px;
+            background: #444;
+            border-radius: 3px;
+        }
+
+        .dog-tag-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            color: #222;
+            text-transform: uppercase;
+            line-height: 1.4;
+            text-shadow: 0.5px 0.5px 0 #aaa;
+        }
+
+        .dog-tag-name {
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: var(--od-med);
+            border: 1px solid var(--od-accent);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--status-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Section Header - Stencil Style */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 30px 0 20px;
+        }
+
+        .section-header h2 {
+            font-family: 'Saira Stencil One', sans-serif;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            color: var(--tan);
+        }
+
+        .section-line {
+            flex: 1;
+            height: 1px;
+            background: var(--od-accent);
+        }
+
+        .section-code {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            border: 1px solid var(--od-accent);
+            padding: 3px 8px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--od-med);
+            border: 1px solid var(--od-accent);
+            padding: 15px;
+            position: relative;
+        }
+
+        .stat-card::before {
+            content: attr(data-code);
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.55rem;
+            color: var(--text-dim);
+        }
+
+        .stat-label {
+            font-family: 'Saira Stencil One', sans-serif;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-family: 'Black Ops One', sans-serif;
+            font-size: 2rem;
+            color: var(--tan);
+            line-height: 1;
+        }
+
+        .stat-unit {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        /* PR Board */
+        .pr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .pr-card {
+            background: var(--od-med);
+            border: 1px solid var(--od-accent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pr-card.elite {
+            border-color: var(--ranger-green);
+        }
+
+        .pr-card.elite::after {
+            content: 'ELITE';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--ranger-green);
+            color: var(--tan);
+            font-family: 'Saira Stencil One', sans-serif;
+            font-size: 0.5rem;
+            padding: 2px 6px;
+            letter-spacing: 1px;
+        }
+
+        .pr-header {
+            background: var(--od-light);
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--od-accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pr-name {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .pr-category {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            background: var(--od-dark);
+            padding: 2px 6px;
+        }
+
+        .pr-body {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .pr-weight {
+            font-family: 'Black Ops One', sans-serif;
+            font-size: 2rem;
+            color: var(--tan);
+        }
+
+        .pr-weight span {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .pr-meta {
+            text-align: right;
+        }
+
+        .pr-date {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        .pr-reps {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 0.75rem;
+            color: var(--ranger-green);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: var(--od-med);
+            border: 1px solid var(--od-accent);
+            margin-bottom: 25px;
+        }
+
+        .chart-header {
+            background: var(--od-light);
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--od-accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-title {
+            font-family: 'Saira Stencil One', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            color: var(--tan);
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        .legend-bar {
+            width: 15px;
+            height: 3px;
+        }
+
+        .chart-body {
+            padding: 20px;
+            height: 180px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 8px;
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 35px;
+            background: linear-gradient(180deg, var(--tan) 0%, var(--tan-dark) 100%);
+            position: relative;
+        }
+
+        .bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--ranger-green);
+        }
+
+        .bar-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.55rem;
+            color: var(--text-dim);
+        }
+
+        /* Op Log (Workouts) */
+        .op-log {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .op-entry {
+            background: var(--od-med);
+            border: 1px solid var(--od-accent);
+            display: flex;
+            align-items: stretch;
+        }
+
+        .op-timestamp {
+            background: var(--od-light);
+            padding: 12px 15px;
+            border-right: 1px solid var(--od-accent);
+            min-width: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .op-day {
+            font-family: 'Black Ops One', sans-serif;
+            font-size: 1.4rem;
+            color: var(--tan);
+            line-height: 1;
+        }
+
+        .op-month {
+            font-family: 'Saira Stencil One', sans-serif;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+        }
+
+        .op-content {
+            flex: 1;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .op-mission {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .op-details {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin-top: 3px;
+        }
+
+        .op-stats {
+            text-align: right;
+        }
+
+        .op-tonnage {
+            font-family: 'Black Ops One', sans-serif;
+            font-size: 1.1rem;
+            color: var(--tan);
+        }
+
+        .op-tonnage-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.55rem;
+            color: var(--text-dim);
+        }
+
+        .op-status {
+            display: inline-block;
+            background: var(--status-green);
+            color: var(--black);
+            font-family: 'Saira Stencil One', sans-serif;
+            font-size: 0.5rem;
+            padding: 2px 6px;
+            margin-top: 4px;
+        }
+
+        /* Intel Cards */
+        .intel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .intel-card {
+            background: var(--od-med);
+            border: 1px solid var(--od-accent);
+            padding: 15px;
+            position: relative;
+        }
+
+        .intel-card::before {
+            content: 'INTEL';
+            position: absolute;
+            top: -8px;
+            left: 12px;
+            background: var(--od-dark);
+            padding: 0 8px;
+            font-family: 'Saira Stencil One', sans-serif;
+            font-size: 0.55rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+        }
+
+        .intel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .intel-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .intel-value {
+            font-family: 'Black Ops One', sans-serif;
+            font-size: 1.4rem;
+            color: var(--ranger-green);
+        }
+
+        .intel-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            background: var(--black);
+            border-top: 2px solid var(--ranger-green);
+        }
+
+        .footer-content {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        .footer-coords {
+            letter-spacing: 1px;
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .op-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .op-stats {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="classification-bar">CLASSIFIED // OPERATOR EYES ONLY</div>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <div class="logo-text">
+                    <h1>TACTICAL FITNESS</h1>
+                    <span>OPERATOR PERFORMANCE TRACKING SYSTEM v3.2</span>
+                </div>
+            </div>
+            <div class="dog-tag">
+                <div class="dog-tag-text">
+                    <div class="dog-tag-name">STEVEN, J.</div>
+                    <div>ID: 47-ALPHA</div>
+                    <div>STREAK: 47 DAYS</div>
+                    <div>STATUS: ACTIVE</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>SYSTEM OPERATIONAL</span>
+            </div>
+            <div class="status-item">
+                <span>LAST SYNC: 0842 HRS</span>
+            </div>
+            <div class="status-item">
+                <span>SECTOR: HOME BASE</span>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>SITREP</h2>
+            <div class="section-line"></div>
+            <div class="section-code">SEC-01</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card" data-code="OPS">
+                <div class="stat-label">MISSIONS/WK</div>
+                <div class="stat-value">5</div>
+                <div class="stat-unit">COMPLETED</div>
+            </div>
+            <div class="stat-card" data-code="TON">
+                <div class="stat-label">PAYLOAD</div>
+                <div class="stat-value">47.2K</div>
+                <div class="stat-unit">LBS MOVED</div>
+            </div>
+            <div class="stat-card" data-code="MAX">
+                <div class="stat-label">NEW RECORDS</div>
+                <div class="stat-value">12</div>
+                <div class="stat-unit">THIS MONTH</div>
+            </div>
+            <div class="stat-card" data-code="INT">
+                <div class="stat-label">INTENSITY</div>
+                <div class="stat-value">82%</div>
+                <div class="stat-unit">AVG EFFORT</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>MAX LOADS</h2>
+            <div class="section-line"></div>
+            <div class="section-code">SEC-02</div>
+        </div>
+
+        <div class="pr-grid">
+            <div class="pr-card elite">
+                <div class="pr-header">
+                    <div class="pr-name">Weighted Pull-Up</div>
+                    <div class="pr-category">BACK</div>
+                </div>
+                <div class="pr-body">
+                    <div class="pr-weight">+90 <span>LBS</span></div>
+                    <div class="pr-meta">
+                        <div class="pr-reps">1 REP MAX</div>
+                        <div class="pr-date">15-JAN-24</div>
+                    </div>
+                </div>
+            </div>
+            <div class="pr-card">
+                <div class="pr-header">
+                    <div class="pr-name">Lat Pulldown</div>
+                    <div class="pr-category">BACK</div>
+                </div>
+                <div class="pr-body">
+                    <div class="pr-weight">185 <span>LBS</span></div>
+                    <div class="pr-meta">
+                        <div class="pr-reps">8 REPS</div>
+                        <div class="pr-date">12-JAN-24</div>
+                    </div>
+                </div>
+            </div>
+            <div class="pr-card">
+                <div class="pr-header">
+                    <div class="pr-name">Bulgarian Split Squat</div>
+                    <div class="pr-category">LEGS</div>
+                </div>
+                <div class="pr-body">
+                    <div class="pr-weight">70 <span>LBS</span></div>
+                    <div class="pr-meta">
+                        <div class="pr-reps">8 REPS</div>
+                        <div class="pr-date">10-JAN-24</div>
+                    </div>
+                </div>
+            </div>
+            <div class="pr-card">
+                <div class="pr-header">
+                    <div class="pr-name">Neck Curl</div>
+                    <div class="pr-category">NECK</div>
+                </div>
+                <div class="pr-body">
+                    <div class="pr-weight">45 <span>LBS</span></div>
+                    <div class="pr-meta">
+                        <div class="pr-reps">12 REPS</div>
+                        <div class="pr-date">08-JAN-24</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>PERFORMANCE METRICS</h2>
+            <div class="section-line"></div>
+            <div class="section-code">SEC-03</div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title">WEEKLY PAYLOAD ANALYSIS</div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-bar" style="background: var(--tan);"></div>
+                        TONNAGE
+                    </div>
+                </div>
+            </div>
+            <div class="chart-body">
+                <div class="bar-group">
+                    <div class="bar" style="height: 55%;"></div>
+                    <div class="bar-label">W01</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 62%;"></div>
+                    <div class="bar-label">W02</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 68%;"></div>
+                    <div class="bar-label">W03</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 50%;"></div>
+                    <div class="bar-label">W04</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 75%;"></div>
+                    <div class="bar-label">W05</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 82%;"></div>
+                    <div class="bar-label">W06</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 78%;"></div>
+                    <div class="bar-label">W07</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 92%;"></div>
+                    <div class="bar-label">W08</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>OPERATION LOG</h2>
+            <div class="section-line"></div>
+            <div class="section-code">SEC-04</div>
+        </div>
+
+        <div class="op-log">
+            <div class="op-entry">
+                <div class="op-timestamp">
+                    <div class="op-day">15</div>
+                    <div class="op-month">JAN</div>
+                </div>
+                <div class="op-content">
+                    <div>
+                        <div class="op-mission">OP: PULL DAY</div>
+                        <div class="op-details">PULL-UPS // ROWS // LAT PULLDOWN // CURLS</div>
+                    </div>
+                    <div class="op-stats">
+                        <div class="op-tonnage">12,450 LBS</div>
+                        <div class="op-tonnage-label">TOTAL PAYLOAD</div>
+                        <div class="op-status">COMPLETE</div>
+                    </div>
+                </div>
+            </div>
+            <div class="op-entry">
+                <div class="op-timestamp">
+                    <div class="op-day">14</div>
+                    <div class="op-month">JAN</div>
+                </div>
+                <div class="op-content">
+                    <div>
+                        <div class="op-mission">OP: PUSH DAY</div>
+                        <div class="op-details">BENCH // OHP // DIPS // TRICEP EXT</div>
+                    </div>
+                    <div class="op-stats">
+                        <div class="op-tonnage">10,820 LBS</div>
+                        <div class="op-tonnage-label">TOTAL PAYLOAD</div>
+                        <div class="op-status">COMPLETE</div>
+                    </div>
+                </div>
+            </div>
+            <div class="op-entry">
+                <div class="op-timestamp">
+                    <div class="op-day">12</div>
+                    <div class="op-month">JAN</div>
+                </div>
+                <div class="op-content">
+                    <div>
+                        <div class="op-mission">OP: LEG DAY</div>
+                        <div class="op-details">BSS // RDL // LEG PRESS // CALF RAISES</div>
+                    </div>
+                    <div class="op-stats">
+                        <div class="op-tonnage">15,200 LBS</div>
+                        <div class="op-tonnage-label">TOTAL PAYLOAD</div>
+                        <div class="op-status">COMPLETE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>INTEL BRIEF</h2>
+            <div class="section-line"></div>
+            <div class="section-code">SEC-05</div>
+        </div>
+
+        <div class="intel-grid">
+            <div class="intel-card">
+                <div class="intel-header">
+                    <div class="intel-title">Volume Trend</div>
+                    <div class="intel-value">+18%</div>
+                </div>
+                <div class="intel-text">Weekly tonnage increased from previous month. Operator performing at elevated capacity.</div>
+            </div>
+            <div class="intel-card">
+                <div class="intel-header">
+                    <div class="intel-title">PR Velocity</div>
+                    <div class="intel-value">3.2/wk</div>
+                </div>
+                <div class="intel-text">Personal records per week. Strength thresholds advancing at optimal rate.</div>
+            </div>
+            <div class="intel-card">
+                <div class="intel-header">
+                    <div class="intel-title">Push/Pull Ratio</div>
+                    <div class="intel-value">0.95</div>
+                </div>
+                <div class="intel-text">Near equilibrium. Muscle group balance within acceptable parameters.</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-coords">GRID: 34.0522°N 118.2437°W</div>
+            <div>TACTICAL FITNESS SYSTEM // UNCLASSIFIED WHEN EMPTY</div>
+            <div>BUILD 3.2.1</div>
+        </div>
+    </footer>
+</body>
+</html>

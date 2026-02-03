@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAINS_TERMINAL v2.087</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-void: #0a0a0c;
+            --bg-terminal: #0d0f12;
+            --bg-panel: #12151a;
+            --border-dim: #1a1f28;
+            --border-glow: #00ff9520;
+            --neon-green: #00ff95;
+            --neon-cyan: #00d4ff;
+            --neon-magenta: #ff00aa;
+            --neon-orange: #ff6b00;
+            --text-bright: #e0ffe8;
+            --text-dim: #4a5568;
+            --text-muted: #2d3748;
+            --scanline-opacity: 0.03;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-void);
+            color: var(--text-bright);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* CRT Scanline Effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0) 0px,
+                rgba(0, 0, 0, 0) 1px,
+                rgba(0, 255, 149, var(--scanline-opacity)) 1px,
+                rgba(0, 255, 149, var(--scanline-opacity)) 2px
+            );
+            animation: scanlines 0.1s linear infinite;
+        }
+
+        @keyframes scanlines {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(2px); }
+        }
+
+        /* Screen flicker effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%);
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            50% { opacity: 1; }
+            100% { opacity: 0.98; }
+        }
+
+        /* Glowing text effect */
+        .glow {
+            text-shadow:
+                0 0 5px var(--neon-green),
+                0 0 10px var(--neon-green),
+                0 0 20px var(--neon-green),
+                0 0 40px var(--neon-green);
+        }
+
+        .glow-cyan {
+            text-shadow:
+                0 0 5px var(--neon-cyan),
+                0 0 10px var(--neon-cyan),
+                0 0 20px var(--neon-cyan);
+        }
+
+        .glow-magenta {
+            text-shadow:
+                0 0 5px var(--neon-magenta),
+                0 0 10px var(--neon-magenta),
+                0 0 20px var(--neon-magenta);
+        }
+
+        /* Main container */
+        .terminal-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .terminal-header {
+            border: 1px solid var(--border-dim);
+            background: var(--bg-terminal);
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan), var(--neon-magenta));
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(30deg); }
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .terminal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: var(--neon-green);
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 5px var(--neon-green); }
+            50% { opacity: 0.5; box-shadow: 0 0 15px var(--neon-green); }
+        }
+
+        .user-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .user-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .user-name::before {
+            content: '> ';
+            color: var(--neon-green);
+        }
+
+        .streak-badge {
+            background: linear-gradient(135deg, var(--neon-orange), #ff3366);
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            animation: badge-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes badge-glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 107, 0, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(255, 107, 0, 0.8); }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-dim);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 40%, rgba(0, 255, 149, 0.03));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--neon-green);
+            transform: translateY(-2px);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-value.green { color: var(--neon-green); }
+        .stat-value.cyan { color: var(--neon-cyan); }
+        .stat-value.magenta { color: var(--neon-magenta); }
+        .stat-value.orange { color: var(--neon-orange); }
+
+        .stat-sub {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 8px;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        @media (min-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Panel Base */
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-dim);
+            padding: 25px;
+            position: relative;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-dim);
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            color: var(--neon-cyan);
+        }
+
+        .panel-badge {
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            background: var(--bg-terminal);
+            border: 1px solid var(--border-dim);
+            color: var(--text-dim);
+        }
+
+        /* PR Board */
+        .pr-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .pr-item {
+            background: var(--bg-terminal);
+            border: 1px solid var(--border-dim);
+            padding: 15px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pr-item::after {
+            content: 'PR';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 0.5rem;
+            font-weight: 700;
+            color: var(--neon-magenta);
+            letter-spacing: 1px;
+        }
+
+        .pr-item:hover {
+            border-color: var(--neon-magenta);
+            background: linear-gradient(135deg, var(--bg-terminal), rgba(255, 0, 170, 0.05));
+        }
+
+        .pr-exercise {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pr-weight {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-bright);
+        }
+
+        .pr-weight span {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 400;
+        }
+
+        .pr-date {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* Progress Chart */
+        .chart-container {
+            height: 200px;
+            position: relative;
+            background: var(--bg-terminal);
+            border: 1px solid var(--border-dim);
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .chart-grid {
+            position: absolute;
+            inset: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .chart-line {
+            height: 1px;
+            background: var(--border-dim);
+        }
+
+        .chart-data {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: calc(100% - 40px);
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--neon-cyan), var(--neon-green));
+            min-height: 10px;
+            position: relative;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            animation: bar-grow 1s ease-out forwards;
+            transform-origin: bottom;
+        }
+
+        .chart-bar:hover {
+            opacity: 1;
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        @keyframes bar-grow {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+
+        .chart-bar::before {
+            content: attr(data-value);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6rem;
+            color: var(--neon-cyan);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .chart-bar:hover::before {
+            opacity: 1;
+        }
+
+        /* Workout Log */
+        .workout-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .workout-item {
+            background: var(--bg-terminal);
+            border: 1px solid var(--border-dim);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .workout-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--neon-green);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .workout-item:hover {
+            border-color: var(--neon-green);
+            padding-left: 20px;
+        }
+
+        .workout-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .workout-day {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .workout-date {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+
+        .workout-meta {
+            text-align: right;
+        }
+
+        .workout-exercises {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+        }
+
+        .workout-volume {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--neon-orange);
+        }
+
+        /* ASCII Art Section */
+        .ascii-section {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 30px 20px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-dim);
+        }
+
+        .ascii-art {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5rem;
+            line-height: 1.1;
+            color: var(--neon-green);
+            white-space: pre;
+            display: inline-block;
+            animation: ascii-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes ascii-glow {
+            0%, 100% {
+                text-shadow: 0 0 5px var(--neon-green);
+                opacity: 0.9;
+            }
+            50% {
+                text-shadow: 0 0 20px var(--neon-green), 0 0 40px var(--neon-green);
+                opacity: 1;
+            }
+        }
+
+        /* Command Line Footer */
+        .command-line {
+            grid-column: 1 / -1;
+            background: var(--bg-terminal);
+            border: 1px solid var(--border-dim);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+
+        .prompt {
+            color: var(--neon-green);
+            font-weight: 600;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: var(--neon-green);
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .typing-text {
+            color: var(--text-dim);
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 4s steps(40) infinite;
+        }
+
+        @keyframes typing {
+            0%, 90% { width: 0; }
+            30%, 80% { width: 100%; }
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 600px) {
+            .terminal-title {
+                font-size: 1.3rem;
+                letter-spacing: 2px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .pr-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ascii-art {
+                font-size: 0.35rem;
+            }
+
+            .system-status {
+                display: none;
+            }
+        }
+
+        /* Hover glow effect for panels */
+        .panel:hover {
+            border-color: var(--border-glow);
+            box-shadow: 0 0 30px rgba(0, 255, 149, 0.05);
+        }
+
+        /* Loading animation */
+        .loading-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan), var(--neon-magenta));
+            animation: loading 2s ease-in-out;
+            z-index: 10000;
+        }
+
+        @keyframes loading {
+            0% { width: 0; opacity: 1; }
+            90% { width: 100%; opacity: 1; }
+            100% { width: 100%; opacity: 0; }
+        }
+
+        /* Selection color */
+        ::selection {
+            background: var(--neon-green);
+            color: var(--bg-void);
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-bar"></div>
+
+    <div class="terminal-container">
+        <!-- Header -->
+        <header class="terminal-header">
+            <div class="header-top">
+                <h1 class="terminal-title glow">GAINS_TERMINAL</h1>
+                <div class="system-status">
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span>SYSTEM ONLINE</span>
+                    </div>
+                    <span>v2.087</span>
+                    <span id="current-time">00:00:00</span>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-name">STEVEN_MCKINNEY</div>
+                <div class="streak-badge">🔥 47 DAY STREAK</div>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">WORKOUTS // WEEK</div>
+                <div class="stat-value green">5</div>
+                <div class="stat-sub">+2 vs last week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">TOTAL VOLUME</div>
+                <div class="stat-value cyan">127.4K</div>
+                <div class="stat-sub">lbs this month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">NEW PRS</div>
+                <div class="stat-value magenta">3</div>
+                <div class="stat-sub">this month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">CONSISTENCY</div>
+                <div class="stat-value orange">94%</div>
+                <div class="stat-sub">attendance rate</div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- PR Board -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">// PR_RECORDS</div>
+                    <div class="panel-badge">LIFETIME BESTS</div>
+                </div>
+                <div class="pr-grid">
+                    <div class="pr-item">
+                        <div class="pr-exercise">Weighted Pull-Up</div>
+                        <div class="pr-weight">+90 <span>lbs</span></div>
+                        <div class="pr-date">2024.01.15</div>
+                    </div>
+                    <div class="pr-item">
+                        <div class="pr-exercise">Lat Pulldown</div>
+                        <div class="pr-weight">220 <span>lbs</span></div>
+                        <div class="pr-date">2024.01.18</div>
+                    </div>
+                    <div class="pr-item">
+                        <div class="pr-exercise">Bulgarian Split</div>
+                        <div class="pr-weight">185 <span>lbs</span></div>
+                        <div class="pr-date">2024.01.12</div>
+                    </div>
+                    <div class="pr-item">
+                        <div class="pr-exercise">Incline Press</div>
+                        <div class="pr-weight">205 <span>lbs</span></div>
+                        <div class="pr-date">2024.01.20</div>
+                    </div>
+                    <div class="pr-item">
+                        <div class="pr-exercise">Neck Curl</div>
+                        <div class="pr-weight">45 <span>lbs</span></div>
+                        <div class="pr-date">2024.01.10</div>
+                    </div>
+                    <div class="pr-item">
+                        <div class="pr-exercise">Cable Row</div>
+                        <div class="pr-weight">195 <span>lbs</span></div>
+                        <div class="pr-date">2024.01.17</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Chart -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">// VOLUME_TREND</div>
+                    <div class="panel-badge">LAST 8 WEEKS</div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-grid">
+                        <div class="chart-line"></div>
+                        <div class="chart-line"></div>
+                        <div class="chart-line"></div>
+                        <div class="chart-line"></div>
+                        <div class="chart-line"></div>
+                    </div>
+                    <div class="chart-data">
+                        <div class="chart-bar" style="height: 45%;" data-value="98K"></div>
+                        <div class="chart-bar" style="height: 52%;" data-value="105K"></div>
+                        <div class="chart-bar" style="height: 48%;" data-value="100K"></div>
+                        <div class="chart-bar" style="height: 60%;" data-value="112K"></div>
+                        <div class="chart-bar" style="height: 55%;" data-value="108K"></div>
+                        <div class="chart-bar" style="height: 70%;" data-value="120K"></div>
+                        <div class="chart-bar" style="height: 65%;" data-value="115K"></div>
+                        <div class="chart-bar" style="height: 85%;" data-value="127K"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Workouts -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">// WORKOUT_LOG</div>
+                    <div class="panel-badge">RECENT</div>
+                </div>
+                <div class="workout-list">
+                    <div class="workout-item">
+                        <div>
+                            <div class="workout-day">PULL_DAY</div>
+                            <div class="workout-date">2024.01.21 // Sunday</div>
+                        </div>
+                        <div class="workout-meta">
+                            <div class="workout-exercises">6 exercises</div>
+                            <div class="workout-volume">24,850 lbs</div>
+                        </div>
+                    </div>
+                    <div class="workout-item">
+                        <div>
+                            <div class="workout-day">PUSH_DAY</div>
+                            <div class="workout-date">2024.01.20 // Saturday</div>
+                        </div>
+                        <div class="workout-meta">
+                            <div class="workout-exercises">5 exercises</div>
+                            <div class="workout-volume">21,200 lbs</div>
+                        </div>
+                    </div>
+                    <div class="workout-item">
+                        <div>
+                            <div class="workout-day">LEGS_DAY</div>
+                            <div class="workout-date">2024.01.19 // Friday</div>
+                        </div>
+                        <div class="workout-meta">
+                            <div class="workout-exercises">4 exercises</div>
+                            <div class="workout-volume">32,400 lbs</div>
+                        </div>
+                    </div>
+                    <div class="workout-item">
+                        <div>
+                            <div class="workout-day">PULL_DAY</div>
+                            <div class="workout-date">2024.01.18 // Thursday</div>
+                        </div>
+                        <div class="workout-meta">
+                            <div class="workout-exercises">6 exercises</div>
+                            <div class="workout-volume">23,100 lbs</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insights Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">// SYSTEM_ANALYSIS</div>
+                    <div class="panel-badge">AI INSIGHTS</div>
+                </div>
+                <div class="workout-list">
+                    <div class="workout-item" style="border-left: 3px solid var(--neon-green);">
+                        <div>
+                            <div class="workout-day" style="color: var(--neon-green);">STRENGTH_UP</div>
+                            <div class="workout-date">Pull-up e1RM increased 8% this month</div>
+                        </div>
+                    </div>
+                    <div class="workout-item" style="border-left: 3px solid var(--neon-orange);">
+                        <div>
+                            <div class="workout-day" style="color: var(--neon-orange);">PLATEAU_ALERT</div>
+                            <div class="workout-date">Incline press stalled for 2 weeks</div>
+                        </div>
+                    </div>
+                    <div class="workout-item" style="border-left: 3px solid var(--neon-cyan);">
+                        <div>
+                            <div class="workout-day" style="color: var(--neon-cyan);">BALANCE_CHECK</div>
+                            <div class="workout-date">Push/Pull ratio: 0.92 (optimal)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ASCII Art Section -->
+            <div class="ascii-section">
+                <pre class="ascii-art">
+    ██████╗  █████╗ ██╗███╗   ██╗███████╗
+   ██╔════╝ ██╔══██╗██║████╗  ██║██╔════╝
+   ██║  ███╗███████║██║██╔██╗ ██║███████╗
+   ██║   ██║██╔══██║██║██║╚██╗██║╚════██║
+   ╚██████╔╝██║  ██║██║██║ ╚████║███████║
+    ╚═════╝ ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚══════╝
+     T E R M I N A L   v 2 . 0 8 7
+                </pre>
+            </div>
+
+            <!-- Command Line Footer -->
+            <div class="command-line">
+                <span class="prompt">root@gains:~$</span>
+                <span class="typing-text">analyzing workout patterns...</span>
+                <span class="cursor"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update clock
+        function updateClock() {
+            const now = new Date();
+            const time = now.toTimeString().split(' ')[0];
+            document.getElementById('current-time').textContent = time;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Add staggered animation to stat cards
+        document.querySelectorAll('.stat-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100 + index * 100);
+        });
+
+        // Add staggered animation to chart bars
+        document.querySelectorAll('.chart-bar').forEach((bar, index) => {
+            bar.style.animationDelay = `${0.5 + index * 0.1}s`;
+        });
+
+        // Add click sound effect simulation (visual feedback)
+        document.querySelectorAll('.stat-card, .workout-item, .pr-item').forEach(el => {
+            el.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+            });
+        });
+
+        // Easter egg: Konami code
+        let konamiCode = [];
+        const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.keyCode);
+            if (konamiCode.length > 10) konamiCode.shift();
+            if (konamiCode.join(',') === konamiSequence.join(',')) {
+                document.querySelector('.ascii-art').style.color = 'var(--neon-magenta)';
+                document.querySelector('.terminal-title').classList.add('glow-magenta');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAINS CORP // ゲインズ・コープ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blade-black: #0a0a0f;
+            --blade-dark: #12121a;
+            --blade-blue: #1a1a2e;
+            --neon-cyan: #00f0ff;
+            --neon-pink: #ff0080;
+            --neon-orange: #ff6b35;
+            --neon-yellow: #ffd700;
+            --holo-blue: #4cc9f0;
+            --rain-blue: rgba(0, 240, 255, 0.1);
+            --text-dim: #4a4a5a;
+            --text-mid: #8a8a9a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--blade-black);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Rain effect */
+        .rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            overflow: hidden;
+        }
+
+        .rain-drop {
+            position: absolute;
+            width: 1px;
+            background: linear-gradient(180deg, transparent, var(--neon-cyan), transparent);
+            animation: fall linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+
+        /* City glow at bottom */
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(
+                0deg,
+                rgba(255, 0, 128, 0.05) 0%,
+                rgba(0, 240, 255, 0.03) 30%,
+                transparent 100%
+            );
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Scanlines */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 2px,
+                rgba(0, 240, 255, 0.01) 2px,
+                rgba(0, 240, 255, 0.01) 4px
+            );
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Main container */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 30px 0;
+            border-bottom: 1px solid var(--neon-cyan);
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-pink), transparent);
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--neon-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            clip-path: polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%);
+            background: var(--blade-dark);
+        }
+
+        .logo-icon::before {
+            content: 'G';
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        .logo-text h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: white;
+            letter-spacing: 5px;
+        }
+
+        .logo-text .japanese {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.9rem;
+            color: var(--neon-pink);
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        /* Holo display badge */
+        .holo-badge {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(255, 0, 128, 0.1));
+            border: 1px solid var(--neon-cyan);
+            padding: 15px 25px;
+            position: relative;
+            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+        }
+
+        .holo-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(0, 240, 255, 0.1) 50%, transparent 60%);
+            animation: holo-scan 3s linear infinite;
+        }
+
+        @keyframes holo-scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .badge-label {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.6rem;
+            color: var(--neon-pink);
+            letter-spacing: 2px;
+        }
+
+        .badge-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        .badge-unit {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-mid);
+        }
+
+        /* Status bar */
+        .status-bar {
+            display: flex;
+            gap: 30px;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--blade-blue);
+            margin-bottom: 30px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-mid);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--neon-cyan);
+            box-shadow: 0 0 10px var(--neon-cyan);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Section headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 40px 0 20px;
+        }
+
+        .section-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 3px;
+        }
+
+        .section-header .jp {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.8rem;
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+        }
+
+        .section-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--neon-cyan), transparent);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--blade-dark);
+            border: 1px solid var(--blade-blue);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--neon-cyan), var(--neon-pink));
+        }
+
+        .stat-card::after {
+            content: attr(data-jp);
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        .stat-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-mid);
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        /* PR Cards */
+        .pr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+        }
+
+        .pr-card {
+            background: var(--blade-dark);
+            border: 1px solid var(--blade-blue);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .pr-card:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+        }
+
+        .pr-card.elite {
+            border-color: var(--neon-pink);
+        }
+
+        .pr-card.elite::after {
+            content: 'エリート';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.6rem;
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+            animation: pulse 1s infinite;
+        }
+
+        .pr-header {
+            background: linear-gradient(90deg, var(--blade-blue), transparent);
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--blade-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pr-name {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .pr-category {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.6rem;
+            color: var(--neon-cyan);
+        }
+
+        .pr-body {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .pr-weight {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--neon-yellow);
+            text-shadow: 0 0 15px var(--neon-yellow);
+        }
+
+        .pr-weight span {
+            font-size: 0.9rem;
+            color: var(--text-mid);
+        }
+
+        .pr-date {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+        }
+
+        /* Chart */
+        .chart-container {
+            background: var(--blade-dark);
+            border: 1px solid var(--blade-blue);
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .chart-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--blade-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+        }
+
+        .chart-title-jp {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.7rem;
+            color: var(--neon-pink);
+            margin-left: 10px;
+        }
+
+        .chart-body {
+            padding: 30px 20px;
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 10px;
+            position: relative;
+        }
+
+        /* Grid lines */
+        .chart-body::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 30px;
+            background:
+                linear-gradient(90deg, var(--blade-blue) 1px, transparent 1px),
+                linear-gradient(0deg, var(--blade-blue) 1px, transparent 1px);
+            background-size: calc(100% / 8) 25%;
+            opacity: 0.5;
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            z-index: 1;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 40px;
+            background: linear-gradient(180deg, var(--neon-cyan), var(--holo-blue));
+            position: relative;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
+        .bar::before {
+            content: attr(data-value);
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--neon-cyan);
+        }
+
+        .bar-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.55rem;
+            color: var(--text-dim);
+        }
+
+        /* Workout Log */
+        .workout-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .workout-item {
+            background: var(--blade-dark);
+            border: 1px solid var(--blade-blue);
+            display: flex;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .workout-item:hover {
+            border-color: var(--neon-cyan);
+        }
+
+        .workout-date {
+            background: var(--blade-blue);
+            padding: 15px 20px;
+            min-width: 90px;
+            text-align: center;
+            border-right: 1px solid var(--blade-blue);
+        }
+
+        .workout-day {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+        }
+
+        .workout-month {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.6rem;
+            color: var(--neon-pink);
+        }
+
+        .workout-content {
+            flex: 1;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .workout-type {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .workout-type-jp {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.65rem;
+            color: var(--neon-pink);
+            margin-left: 8px;
+        }
+
+        .workout-exercises {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 5px;
+        }
+
+        .workout-stats {
+            text-align: right;
+        }
+
+        .workout-tonnage {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--neon-yellow);
+            text-shadow: 0 0 10px var(--neon-yellow);
+        }
+
+        .workout-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.55rem;
+            color: var(--text-dim);
+        }
+
+        /* Insights */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .insight-card {
+            background: var(--blade-dark);
+            border: 1px solid var(--blade-blue);
+            border-left: 3px solid var(--neon-cyan);
+            padding: 20px;
+            position: relative;
+        }
+
+        .insight-card::after {
+            content: attr(data-jp);
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+        }
+
+        .insight-title {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-mid);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .insight-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
+            margin-bottom: 8px;
+        }
+
+        .insight-text {
+            font-size: 0.8rem;
+            color: var(--text-mid);
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            padding: 25px 0;
+            border-top: 1px solid var(--blade-blue);
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 1.5rem;
+            color: var(--neon-pink);
+            text-shadow: 0 0 20px var(--neon-pink);
+            margin-bottom: 10px;
+        }
+
+        .footer-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .logo-section {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .workout-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .workout-stats {
+                text-align: left;
+            }
+
+            .status-bar {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        }
+
+        /* Neon glow animation */
+        @keyframes neon-glow {
+            0%, 100% {
+                text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan), 0 0 30px var(--neon-cyan);
+            }
+            50% {
+                text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan);
+            }
+        }
+
+        .badge-value {
+            animation: neon-glow 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="rain" id="rain"></div>
+
+    <main>
+        <header>
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon"></div>
+                    <div class="logo-text">
+                        <h1>GAINS CORP</h1>
+                        <div class="japanese">ゲインズ・コーポレーション</div>
+                    </div>
+                </div>
+                <div class="holo-badge">
+                    <div class="badge-label">連続記録</div>
+                    <div class="badge-value">47</div>
+                    <div class="badge-unit">DAY STREAK</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>SYSTEM ONLINE</span>
+            </div>
+            <div class="status-item">
+                <span>SECTOR: LOS ANGELES</span>
+            </div>
+            <div class="status-item">
+                <span>TIME: 08:42:17 PST</span>
+            </div>
+            <div class="status-item">
+                <span>USER: STEVEN.K</span>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>METRICS</h2>
+            <span class="jp">メトリクス</span>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card" data-jp="週間">
+                <div class="stat-value">5</div>
+                <div class="stat-label">SESSIONS / WEEK</div>
+            </div>
+            <div class="stat-card" data-jp="総量">
+                <div class="stat-value">47.2K</div>
+                <div class="stat-label">TOTAL TONNAGE</div>
+            </div>
+            <div class="stat-card" data-jp="記録">
+                <div class="stat-value">12</div>
+                <div class="stat-label">NEW RECORDS</div>
+            </div>
+            <div class="stat-card" data-jp="強度">
+                <div class="stat-value">82%</div>
+                <div class="stat-label">AVG INTENSITY</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>PERSONAL RECORDS</h2>
+            <span class="jp">自己記録</span>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="pr-grid">
+            <div class="pr-card elite">
+                <div class="pr-header">
+                    <div class="pr-name">Weighted Pull-Up</div>
+                    <div class="pr-category">背中</div>
+                </div>
+                <div class="pr-body">
+                    <div class="pr-weight">+90 <span>LBS</span></div>
+                    <div class="pr-date">2024.01.15</div>
+                </div>
+            </div>
+            <div class="pr-card">
+                <div class="pr-header">
+                    <div class="pr-name">Lat Pulldown</div>
+                    <div class="pr-category">背中</div>
+                </div>
+                <div class="pr-body">
+                    <div class="pr-weight">185 <span>LBS</span></div>
+                    <div class="pr-date">2024.01.12</div>
+                </div>
+            </div>
+            <div class="pr-card">
+                <div class="pr-header">
+                    <div class="pr-name">Bulgarian Split Squat</div>
+                    <div class="pr-category">脚</div>
+                </div>
+                <div class="pr-body">
+                    <div class="pr-weight">70 <span>LBS</span></div>
+                    <div class="pr-date">2024.01.10</div>
+                </div>
+            </div>
+            <div class="pr-card">
+                <div class="pr-header">
+                    <div class="pr-name">Neck Curl</div>
+                    <div class="pr-category">首</div>
+                </div>
+                <div class="pr-body">
+                    <div class="pr-weight">45 <span>LBS</span></div>
+                    <div class="pr-date">2024.01.08</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>PROGRESSION</h2>
+            <span class="jp">進捗</span>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-header">
+                <div>
+                    <span class="chart-title">WEEKLY TONNAGE</span>
+                    <span class="chart-title-jp">週間総重量</span>
+                </div>
+            </div>
+            <div class="chart-body">
+                <div class="bar-group">
+                    <div class="bar" style="height: 55%;" data-value="32K"></div>
+                    <div class="bar-label">W01</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 62%;" data-value="35K"></div>
+                    <div class="bar-label">W02</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 70%;" data-value="38K"></div>
+                    <div class="bar-label">W03</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 48%;" data-value="28K"></div>
+                    <div class="bar-label">W04</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 75%;" data-value="41K"></div>
+                    <div class="bar-label">W05</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 82%;" data-value="44K"></div>
+                    <div class="bar-label">W06</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 78%;" data-value="42K"></div>
+                    <div class="bar-label">W07</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 92%;" data-value="47K"></div>
+                    <div class="bar-label">W08</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>SESSION LOG</h2>
+            <span class="jp">セッション記録</span>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="workout-list">
+            <div class="workout-item">
+                <div class="workout-date">
+                    <div class="workout-day">15</div>
+                    <div class="workout-month">1月</div>
+                </div>
+                <div class="workout-content">
+                    <div>
+                        <div class="workout-type">
+                            PULL DAY
+                            <span class="workout-type-jp">引く日</span>
+                        </div>
+                        <div class="workout-exercises">PULL-UPS // ROWS // LAT PULLDOWN // CURLS</div>
+                    </div>
+                    <div class="workout-stats">
+                        <div class="workout-tonnage">12,450</div>
+                        <div class="workout-label">LBS MOVED</div>
+                    </div>
+                </div>
+            </div>
+            <div class="workout-item">
+                <div class="workout-date">
+                    <div class="workout-day">14</div>
+                    <div class="workout-month">1月</div>
+                </div>
+                <div class="workout-content">
+                    <div>
+                        <div class="workout-type">
+                            PUSH DAY
+                            <span class="workout-type-jp">押す日</span>
+                        </div>
+                        <div class="workout-exercises">BENCH // OHP // DIPS // TRICEP EXT</div>
+                    </div>
+                    <div class="workout-stats">
+                        <div class="workout-tonnage">10,820</div>
+                        <div class="workout-label">LBS MOVED</div>
+                    </div>
+                </div>
+            </div>
+            <div class="workout-item">
+                <div class="workout-date">
+                    <div class="workout-day">12</div>
+                    <div class="workout-month">1月</div>
+                </div>
+                <div class="workout-content">
+                    <div>
+                        <div class="workout-type">
+                            LEG DAY
+                            <span class="workout-type-jp">脚の日</span>
+                        </div>
+                        <div class="workout-exercises">BSS // RDL // LEG PRESS // CALF RAISES</div>
+                    </div>
+                    <div class="workout-stats">
+                        <div class="workout-tonnage">15,200</div>
+                        <div class="workout-label">LBS MOVED</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>ANALYSIS</h2>
+            <span class="jp">分析</span>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="insights-grid">
+            <div class="insight-card" data-jp="ボリューム">
+                <div class="insight-title">VOLUME TREND</div>
+                <div class="insight-value">+18%</div>
+                <div class="insight-text">Weekly tonnage increased. Progressive overload protocols operating within optimal parameters.</div>
+            </div>
+            <div class="insight-card" data-jp="速度">
+                <div class="insight-title">PR VELOCITY</div>
+                <div class="insight-value">3.2/wk</div>
+                <div class="insight-text">Personal record acquisition rate. Neural adaptation and strength gains on track.</div>
+            </div>
+            <div class="insight-card" data-jp="バランス">
+                <div class="insight-title">PUSH/PULL RATIO</div>
+                <div class="insight-value">0.95</div>
+                <div class="insight-text">Muscular balance within acceptable range. Structural integrity maintained.</div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-logo">ゲインズ</div>
+            <div class="footer-text">GAINS CORPORATION // LOS ANGELES SECTOR // EST. 2024</div>
+        </footer>
+    </main>
+
+    <script>
+        // Rain effect
+        const rain = document.getElementById('rain');
+        const dropCount = 100;
+
+        for (let i = 0; i < dropCount; i++) {
+            const drop = document.createElement('div');
+            drop.className = 'rain-drop';
+            drop.style.left = Math.random() * 100 + '%';
+            drop.style.height = Math.random() * 20 + 10 + 'px';
+            drop.style.animationDuration = Math.random() * 1 + 0.5 + 's';
+            drop.style.animationDelay = Math.random() * 2 + 's';
+            rain.appendChild(drop);
+        }
+    </script>
+</body>
+</html>

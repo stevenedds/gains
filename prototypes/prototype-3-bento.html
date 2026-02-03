@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gains - Bento Design</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 30px 0 40px;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .header p { color: #666; font-size: 0.9rem; }
+        
+        /* Bento Grid */
+        .bento {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 120px;
+            gap: 12px;
+        }
+        
+        .card {
+            background: #141414;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .card:hover { 
+            transform: scale(1.02); 
+            background: #1a1a1a;
+        }
+        
+        /* Card sizes */
+        .card.wide { grid-column: span 2; }
+        .card.tall { grid-row: span 2; }
+        .card.big { grid-column: span 2; grid-row: span 2; }
+        
+        /* Streak card */
+        .streak-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f2918 100%);
+            border: 1px solid #1f3d1f;
+        }
+        .streak-card .icon { font-size: 2.5rem; margin-bottom: auto; }
+        .streak-card .value { font-size: 3rem; font-weight: 700; color: #30D158; }
+        .streak-card .label { color: #666; font-size: 0.85rem; }
+        
+        /* Stat cards */
+        .stat-card .icon { font-size: 1.5rem; margin-bottom: 8px; }
+        .stat-card .value { font-size: 2rem; font-weight: 600; margin-top: auto; }
+        .stat-card .label { color: #555; font-size: 0.75rem; text-transform: uppercase; }
+        .stat-card.orange .value { color: #FF9F0A; }
+        .stat-card.blue .value { color: #0A84FF; }
+        .stat-card.purple .value { color: #BF5AF2; }
+        .stat-card.green .value { color: #30D158; }
+        
+        /* PR card */
+        .pr-card {
+            justify-content: space-between;
+        }
+        .pr-card h3 { 
+            font-size: 0.8rem; 
+            color: #666; 
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .pr-list { margin-top: auto; }
+        .pr-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #222;
+        }
+        .pr-item:last-child { border-bottom: none; }
+        .pr-name { font-size: 0.9rem; }
+        .pr-val { font-weight: 600; color: #FF9F0A; }
+        
+        /* Chart card */
+        .chart-card {
+            position: relative;
+        }
+        .chart-card h3 {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 100%;
+            padding-bottom: 10px;
+        }
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, #0A84FF 0%, #0A84FF55 100%);
+            border-radius: 4px;
+            min-height: 10px;
+        }
+        
+        /* Workout card */
+        .workout-card h3 {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .workout-mini {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .workout-mini:last-child { border-bottom: none; }
+        .workout-day {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-right: 12px;
+        }
+        .workout-day.mon { background: #0A84FF22; color: #0A84FF; }
+        .workout-day.wed { background: #30D15822; color: #30D158; }
+        .workout-day.fri { background: #BF5AF222; color: #BF5AF2; }
+        .workout-text { font-size: 0.85rem; color: #888; }
+        
+        /* Insight card */
+        .insight-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #1a1420 100%);
+            border: 1px solid #2a1a2a;
+        }
+        .insight-card .icon { font-size: 1.5rem; margin-bottom: 8px; }
+        .insight-card .title { font-weight: 600; margin-bottom: 4px; }
+        .insight-card .desc { font-size: 0.85rem; color: #888; line-height: 1.4; }
+        
+        /* Balance card */
+        .balance-card h3 {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: auto;
+        }
+        .balance-visual {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .balance-bar {
+            flex: 1;
+            height: 8px;
+            background: #222;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+        }
+        .balance-fill { height: 100%; }
+        .balance-fill.push { background: #0A84FF; width: 52%; }
+        .balance-fill.pull { background: #30D158; width: 48%; }
+        .balance-label { font-size: 0.75rem; color: #666; }
+        
+        @media (max-width: 700px) {
+            .bento {
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: 100px;
+            }
+            .card.wide, .card.big { grid-column: span 2; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>💪 Steven's Gains</h1>
+            <p>Since September 2025</p>
+        </header>
+        
+        <div class="bento">
+            <!-- Streak - tall -->
+            <div class="card streak-card tall">
+                <div class="icon">🔥</div>
+                <div class="value">22</div>
+                <div class="label">Week Streak</div>
+            </div>
+            
+            <!-- Quick stats -->
+            <div class="card stat-card orange">
+                <div class="icon">🏋️</div>
+                <div class="label">Workouts</div>
+                <div class="value">65</div>
+            </div>
+            
+            <div class="card stat-card blue">
+                <div class="icon">📊</div>
+                <div class="label">This Week</div>
+                <div class="value">2/3</div>
+            </div>
+            
+            <div class="card stat-card purple">
+                <div class="icon">🏆</div>
+                <div class="label">Total PRs</div>
+                <div class="value">12</div>
+            </div>
+            
+            <!-- Volume Chart - wide -->
+            <div class="card chart-card wide">
+                <h3>Weekly Volume</h3>
+                <div class="chart-bars">
+                    <div class="chart-bar" style="height: 50%;"></div>
+                    <div class="chart-bar" style="height: 65%;"></div>
+                    <div class="chart-bar" style="height: 55%;"></div>
+                    <div class="chart-bar" style="height: 70%;"></div>
+                    <div class="chart-bar" style="height: 85%;"></div>
+                    <div class="chart-bar" style="height: 75%;"></div>
+                    <div class="chart-bar" style="height: 90%;"></div>
+                    <div class="chart-bar" style="height: 100%;"></div>
+                </div>
+            </div>
+            
+            <!-- PRs - big -->
+            <div class="card pr-card big">
+                <h3>🏆 Personal Records</h3>
+                <div class="pr-list">
+                    <div class="pr-item">
+                        <span class="pr-name">Weighted Pull-ups</span>
+                        <span class="pr-val">70 × 7</span>
+                    </div>
+                    <div class="pr-item">
+                        <span class="pr-name">Lat Pull</span>
+                        <span class="pr-val">250 × 7</span>
+                    </div>
+                    <div class="pr-item">
+                        <span class="pr-name">DB Press</span>
+                        <span class="pr-val">75 × 12</span>
+                    </div>
+                    <div class="pr-item">
+                        <span class="pr-name">BSS</span>
+                        <span class="pr-val">40 × 12</span>
+                    </div>
+                    <div class="pr-item">
+                        <span class="pr-name">Neck Curls</span>
+                        <span class="pr-val">25 × 18</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Push/Pull Balance -->
+            <div class="card balance-card wide">
+                <h3>Push/Pull Balance</h3>
+                <div class="balance-visual">
+                    <span class="balance-label">Push</span>
+                    <div class="balance-bar">
+                        <div class="balance-fill push"></div>
+                        <div class="balance-fill pull"></div>
+                    </div>
+                    <span class="balance-label">Pull</span>
+                </div>
+            </div>
+            
+            <!-- Insight -->
+            <div class="card insight-card wide">
+                <div class="icon">💡</div>
+                <div class="title">BSS Crushing It</div>
+                <div class="desc">Doubled weight in 5 weeks. Try 45 lbs next session.</div>
+            </div>
+            
+            <!-- Recent workouts - wide tall -->
+            <div class="card workout-card wide tall">
+                <h3>Recent Workouts</h3>
+                <div class="workout-mini">
+                    <div class="workout-day mon">M</div>
+                    <div class="workout-text">Pull-ups 60×8 · Incline · Neck 🏆</div>
+                </div>
+                <div class="workout-mini">
+                    <div class="workout-day fri">F</div>
+                    <div class="workout-text">DB Press 75×12 · Lat Pull</div>
+                </div>
+                <div class="workout-mini">
+                    <div class="workout-day wed">W</div>
+                    <div class="workout-text">BSS 40×12 🏆 · Pistols · Triceps</div>
+                </div>
+            </div>
+            
+            <!-- Volume change -->
+            <div class="card stat-card green">
+                <div class="icon">📈</div>
+                <div class="label">vs Last Week</div>
+                <div class="value">+8%</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

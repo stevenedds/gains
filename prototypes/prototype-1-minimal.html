@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gains - Minimal Design</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        
+        /* Header */
+        .header { margin-bottom: 60px; }
+        .header h1 { 
+            font-size: 3.5rem; 
+            font-weight: 700; 
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+        }
+        .header p { color: #666; font-size: 1.1rem; }
+        
+        /* Stats Row */
+        .stats {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .stat { }
+        .stat-value { 
+            font-size: 3rem; 
+            font-weight: 600;
+            color: #0A84FF;
+            line-height: 1;
+        }
+        .stat-label { 
+            font-size: 0.85rem; 
+            color: #666; 
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 8px;
+        }
+        
+        /* Section */
+        .section { margin-bottom: 60px; }
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #444;
+            margin-bottom: 20px;
+        }
+        
+        /* PR List */
+        .pr-list { }
+        .pr-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 20px 0;
+            border-bottom: 1px solid #111;
+        }
+        .pr-item:last-child { border-bottom: none; }
+        .pr-name { font-size: 1.1rem; font-weight: 500; }
+        .pr-value { 
+            font-size: 1.4rem; 
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+        .pr-item:nth-child(1) .pr-value { color: #0A84FF; }
+        .pr-item:nth-child(2) .pr-value { color: #30D158; }
+        .pr-item:nth-child(3) .pr-value { color: #FF9F0A; }
+        .pr-item:nth-child(4) .pr-value { color: #BF5AF2; }
+        
+        /* Chart placeholder */
+        .chart {
+            background: linear-gradient(180deg, #0A84FF22 0%, transparent 100%);
+            height: 200px;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 20px;
+            gap: 8px;
+        }
+        .bar {
+            flex: 1;
+            background: #0A84FF;
+            border-radius: 4px 4px 0 0;
+            opacity: 0.7;
+        }
+        
+        /* Workouts */
+        .workout {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #111;
+        }
+        .workout:last-child { border-bottom: none; }
+        .workout-date { color: #666; font-size: 0.9rem; }
+        .workout-exercises { color: #888; font-size: 0.9rem; }
+        
+        /* Streak badge */
+        .streak {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #1a1a1a;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            margin-top: 16px;
+        }
+        .streak-dot {
+            width: 8px;
+            height: 8px;
+            background: #30D158;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Gains</h1>
+            <p>September 2025 — Present</p>
+            <div class="streak">
+                <span class="streak-dot"></span>
+                22 week streak
+            </div>
+        </header>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">65</div>
+                <div class="stat-label">Workouts</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">12</div>
+                <div class="stat-label">PRs</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">3×</div>
+                <div class="stat-label">Weekly</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Personal Records</div>
+            <div class="pr-list">
+                <div class="pr-item">
+                    <span class="pr-name">Weighted Pull-ups</span>
+                    <span class="pr-value">70 × 7</span>
+                </div>
+                <div class="pr-item">
+                    <span class="pr-name">Lat Pull</span>
+                    <span class="pr-value">250 × 7</span>
+                </div>
+                <div class="pr-item">
+                    <span class="pr-name">DB Press</span>
+                    <span class="pr-value">75 × 12</span>
+                </div>
+                <div class="pr-item">
+                    <span class="pr-name">Bulgarian Split Squat</span>
+                    <span class="pr-value">40 × 12</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Volume Trend</div>
+            <div class="chart">
+                <div class="bar" style="height: 60%;"></div>
+                <div class="bar" style="height: 75%;"></div>
+                <div class="bar" style="height: 65%;"></div>
+                <div class="bar" style="height: 80%;"></div>
+                <div class="bar" style="height: 90%;"></div>
+                <div class="bar" style="height: 85%;"></div>
+                <div class="bar" style="height: 95%;"></div>
+                <div class="bar" style="height: 100%;"></div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Recent</div>
+            <div class="workout">
+                <span class="workout-date">Feb 2</span>
+                <span class="workout-exercises">Pull-ups, Incline, Neck</span>
+            </div>
+            <div class="workout">
+                <span class="workout-date">Jan 30</span>
+                <span class="workout-exercises">DB Press, Lat Pull</span>
+            </div>
+            <div class="workout">
+                <span class="workout-date">Jan 28</span>
+                <span class="workout-exercises">BSS, Pistols, Triceps</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
