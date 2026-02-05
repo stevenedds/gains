@@ -64,7 +64,7 @@
         .container { padding: 50px 20px 40px; max-width: 1400px; margin: 0 auto; }
 
         /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 40px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 40px; }
         .stat-block {
             background: var(--steel);
             padding: 25px 20px;
@@ -292,6 +292,11 @@
                 <div class="stat-trend" id="last-session-ago">--</div>
             </div>
             <div class="stat-block" data-index="05">
+                <div class="stat-label">Total Volume</div>
+                <div class="stat-value highlight" id="total-volume">--</div>
+                <div class="stat-trend" id="volume-unit">lbs lifted</div>
+            </div>
+            <div class="stat-block" data-index="06">
                 <div class="stat-label">Training Since</div>
                 <div class="stat-value" id="start-date">--</div>
             </div>
@@ -486,6 +491,16 @@
                         agoEl.className = 'stat-trend ' + (daysAgo <= 3 ? 'up' : 'down');
                     }
                 }
+
+                // Total volume
+                let allTimeVolume = 0;
+                workouts.forEach(w => {
+                    w.exercises.forEach(ex => {
+                        ex.sets.forEach(s => allTimeVolume += (s.weight || 0) * s.reps);
+                    });
+                });
+                const volK = (allTimeVolume / 1000).toFixed(0);
+                document.getElementById('total-volume').textContent = volK + 'K';
 
                 // Names
                 const prNames = {
