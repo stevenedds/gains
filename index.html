@@ -64,7 +64,7 @@
         .container { padding: 50px 20px 40px; max-width: 1400px; margin: 0 auto; }
 
         /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 40px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 40px; }
         .stat-block {
             background: var(--steel);
             padding: 25px 20px;
@@ -241,7 +241,8 @@
 
         /* Responsive */
         @media (max-width: 900px) {
-            .stats-grid, .chart-grid, .muscle-grid, .comparison-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-grid, .muscle-grid, .comparison-grid { grid-template-columns: 1fr; }
             .pr-grid { grid-template-columns: repeat(2, 1fr); }
             .days-grid { grid-template-columns: repeat(3, 1fr); }
             .stat-value { font-size: 2.5rem; }
@@ -286,6 +287,11 @@
                 <div class="stat-value highlight" id="total-prs">--</div>
             </div>
             <div class="stat-block" data-index="04">
+                <div class="stat-label">Last Session</div>
+                <div class="stat-value" id="last-session">--</div>
+                <div class="stat-trend" id="last-session-ago">--</div>
+            </div>
+            <div class="stat-block" data-index="05">
                 <div class="stat-label">Training Since</div>
                 <div class="stat-value" id="start-date">--</div>
             </div>
@@ -459,6 +465,27 @@
                 document.getElementById('streak').innerHTML = '22<span class="stat-unit">wks</span>';
                 document.getElementById('start-date').textContent = 'SEP 25';
                 document.getElementById('workout-count').textContent = workouts.length + ' Sessions';
+
+                // Last session
+                if (workouts.length > 0) {
+                    const lastWorkout = workouts[0]; // workouts are sorted newest first
+                    const lastDate = new Date(lastWorkout.date + 'T12:00:00');
+                    const lastDateStr = lastDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
+                    document.getElementById('last-session').textContent = lastDateStr;
+                    
+                    const daysAgo = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+                    const agoEl = document.getElementById('last-session-ago');
+                    if (daysAgo === 0) {
+                        agoEl.textContent = 'Today';
+                        agoEl.className = 'stat-trend up';
+                    } else if (daysAgo === 1) {
+                        agoEl.textContent = 'Yesterday';
+                        agoEl.className = 'stat-trend up';
+                    } else {
+                        agoEl.textContent = daysAgo + ' days ago';
+                        agoEl.className = 'stat-trend ' + (daysAgo <= 3 ? 'up' : 'down');
+                    }
+                }
 
                 // Names
                 const prNames = {
