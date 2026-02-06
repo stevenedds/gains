@@ -76,9 +76,32 @@
       "category": "traps",
       "unit": "lbs",
       "trackPR": true
+    },
+    "incline_delt_raises": {
+      "name": "Seated Incline Delt Raises",
+      "category": "shoulders",
+      "unit": "lbs",
+      "trackPR": true
+    },
+    "db_shrugs": {
+      "name": "DB Shrugs",
+      "category": "traps",
+      "unit": "lbs",
+      "trackPR": true
     }
   },
   "workouts": [
+    {
+      "date": "2026-02-06",
+      "day": "Friday",
+      "exercises": [
+        {"id": "seated_db_press", "sets": [{"weight": 75, "reps": 12}, {"weight": 75, "reps": 12}]},
+        {"id": "techno_lat_pull", "sets": [{"weight": 235, "reps": 8}, {"weight": 225, "reps": 9}]},
+        {"id": "overhead_tricep_ext", "sets": [{"weight": 75, "reps": 12}, {"weight": 75, "reps": 12}]},
+        {"id": "incline_delt_raises", "sets": [{"weight": 30, "reps": 8}, {"weight": 30, "reps": 6}, {"weight": 25, "reps": 12}]},
+        {"id": "db_shrugs", "sets": [{"weight": 75, "reps": 15}, {"weight": 75, "reps": 15}]}
+      ]
+    },
     {
       "date": "2026-02-04",
       "day": "Wednesday",
@@ -289,6 +312,8 @@
     "reverse_neck_curls": {"weight": 25, "reps": 18, "date": "2026-02-04", "estimated1RM": 40},
     "single_arm_shrug": {"weight": 75, "reps": 15, "date": "2026-02-04", "estimated1RM": 94},
     "reverse_shoulder_flys": {"weight": 20, "reps": 12, "date": "2026-02-04", "estimated1RM": 29},
-    "cable_lat_raises": {"weight": 20, "reps": 9, "date": "2026-02-04", "estimated1RM": 26}
+    "cable_lat_raises": {"weight": 20, "reps": 9, "date": "2026-02-04", "estimated1RM": 26},
+    "incline_delt_raises": {"weight": 30, "reps": 8, "date": "2026-02-06", "estimated1RM": 37},
+    "db_shrugs": {"weight": 75, "reps": 15, "date": "2026-02-06", "estimated1RM": 94}
   }
 }
