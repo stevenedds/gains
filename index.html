@@ -171,29 +171,31 @@
         .gauge-ratio { text-align: center; margin-top: 10px; font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; }
         .gauge-ratio span { color: var(--text-dim); font-size: 0.8rem; }
 
-        /* Calendar Heatmap */
+        /* Week Columns Consistency */
         .calendar-section { margin-bottom: 50px; }
         .calendar-container { background: var(--steel); border: 3px solid var(--concrete); padding: 20px; }
-        .calendar-months { display: flex; justify-content: space-between; margin-bottom: 10px; padding-left: 30px; }
-        .calendar-months span { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; }
-        .calendar-wrapper { display: flex; gap: 5px; }
-        .calendar-days { display: flex; flex-direction: column; gap: 3px; padding-top: 2px; }
-        .calendar-days span { font-size: 0.5rem; color: var(--text-dim); height: 12px; line-height: 12px; }
-        .calendar-grid { display: grid; grid-template-rows: repeat(7, 1fr); grid-auto-flow: column; gap: 3px; }
-        .calendar-day {
-            width: 12px;
-            height: 12px;
+        .week-grid { display: flex; gap: 4px; align-items: flex-end; overflow-x: auto; padding-bottom: 10px; }
+        .week-column { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+        .week-column .week-label { font-size: 0.5rem; color: var(--text-dim); margin-top: 6px; white-space: nowrap; }
+        .week-slot {
+            width: 16px;
+            height: 16px;
             background: var(--bg-dark);
-            border: 1px solid var(--concrete);
+            border: 2px solid var(--concrete);
             border-radius: 2px;
+            transition: all 0.15s ease;
         }
-        .calendar-day.empty { visibility: hidden; }
-        .calendar-day.level-1 { background: rgba(180, 255, 0, 0.25); border-color: rgba(180, 255, 0, 0.3); }
-        .calendar-day.level-2 { background: rgba(180, 255, 0, 0.5); border-color: rgba(180, 255, 0, 0.6); }
-        .calendar-day.level-3 { background: var(--acid-green); border-color: var(--acid-green); }
-        .calendar-legend { display: flex; align-items: center; justify-content: flex-end; gap: 5px; margin-top: 10px; }
-        .calendar-legend span { font-size: 0.6rem; color: var(--text-dim); }
-        .calendar-legend .box { width: 12px; height: 12px; border-radius: 2px; }
+        .week-slot.filled { background: var(--acid-green); border-color: var(--acid-green); }
+        .week-slot.partial { background: rgba(180, 255, 0, 0.5); border-color: rgba(180, 255, 0, 0.6); }
+        .week-column.current .week-slot { border-color: var(--rust); }
+        .week-column.perfect .week-label { color: var(--acid-green); }
+        .calendar-legend { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 15px; }
+        .calendar-legend span { font-size: 0.65rem; color: var(--text-dim); }
+        .calendar-legend .box { width: 14px; height: 14px; border-radius: 2px; border: 2px solid; }
+        .consistency-stats { display: flex; gap: 30px; margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--concrete); }
+        .consistency-stat { }
+        .consistency-stat .label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; }
+        .consistency-stat .value { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--acid-green); }
 
         /* Week Comparison */
         .comparison-section { margin-bottom: 50px; }
@@ -404,29 +406,29 @@
         <section class="calendar-section">
             <div class="section-header">
                 <h2>Consistency</h2>
-                <span class="tag">Workout Calendar</span>
+                <span class="tag">3× Per Week</span>
             </div>
             <div class="calendar-container">
-                <div class="calendar-months" id="calendar-months"></div>
-                <div class="calendar-wrapper">
-                    <div class="calendar-days">
-                        <span>Mon</span>
-                        <span></span>
-                        <span>Wed</span>
-                        <span></span>
-                        <span>Fri</span>
-                        <span></span>
-                        <span>Sun</span>
-                    </div>
-                    <div class="calendar-grid" id="calendar-grid"></div>
-                </div>
+                <div class="week-grid" id="week-grid"></div>
                 <div class="calendar-legend">
-                    <span>Less</span>
-                    <div class="box" style="background: var(--bg-dark); border: 1px solid var(--concrete);"></div>
-                    <div class="box" style="background: rgba(180, 255, 0, 0.2);"></div>
-                    <div class="box" style="background: rgba(180, 255, 0, 0.5);"></div>
-                    <div class="box" style="background: var(--acid-green);"></div>
-                    <span>More</span>
+                    <span>Missed</span>
+                    <div class="box" style="background: var(--bg-dark); border-color: var(--concrete);"></div>
+                    <div class="box" style="background: var(--acid-green); border-color: var(--acid-green);"></div>
+                    <span>Completed</span>
+                </div>
+                <div class="consistency-stats">
+                    <div class="consistency-stat">
+                        <div class="label">Perfect Weeks</div>
+                        <div class="value" id="perfect-weeks">--</div>
+                    </div>
+                    <div class="consistency-stat">
+                        <div class="label">Hit Rate</div>
+                        <div class="value" id="hit-rate">--%</div>
+                    </div>
+                    <div class="consistency-stat">
+                        <div class="label">Current Streak</div>
+                        <div class="value" id="week-streak">--</div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -703,59 +705,115 @@
                 document.getElementById('gauge-pull').textContent = pullPct + '%';
                 document.getElementById('push-pull-ratio').textContent = (pushVol / pullVol).toFixed(2) + ':1';
 
-                // Calendar heatmap (GitHub-style)
-                const calendarGrid = document.getElementById('calendar-grid');
-                const calendarMonths = document.getElementById('calendar-months');
+                // Week columns consistency tracker
+                const weekGrid = document.getElementById('week-grid');
                 const workoutDates = new Set(workouts.map(w => w.date));
                 
-                // Start from first Monday on or before Sep 1, 2025
-                const startDate = new Date('2025-09-01');
+                // Find first workout date to start from
+                const sortedDates = workouts.map(w => w.date).sort();
+                const firstWorkout = sortedDates.length > 0 ? new Date(sortedDates[0] + 'T12:00:00') : new Date();
+                
+                // Get Monday of that week
+                const startDate = new Date(firstWorkout);
                 const dayOfWeek = startDate.getDay();
                 const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
                 startDate.setDate(startDate.getDate() + mondayOffset);
                 
                 const endDate = new Date(); // today
-                const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 7;
+                const totalWeeks = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24) / 7) + 1;
                 
-                // Track months for labels
-                const monthPositions = [];
-                let lastMonth = -1;
+                // Get current week number
+                const currentWeekStart = new Date(today);
+                const currentDayOfWeek = currentWeekStart.getDay();
+                const currentMondayOffset = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
+                currentWeekStart.setDate(currentWeekStart.getDate() + currentMondayOffset);
                 
-                // Generate days (7 rows, columns = weeks)
-                for (let i = 0; i < totalDays; i++) {
-                    const d = new Date(startDate);
-                    d.setDate(d.getDate() + i);
-                    const dateStr = d.toISOString().split('T')[0];
+                let perfectWeeks = 0;
+                let totalWorkoutsTracked = 0;
+                let totalSlotsTracked = 0;
+                let currentStreak = 0;
+                let streakBroken = false;
+                
+                // Build weeks array first (for streak calculation from recent to old)
+                const weeksData = [];
+                
+                for (let w = 0; w < totalWeeks; w++) {
+                    const weekStart = new Date(startDate);
+                    weekStart.setDate(weekStart.getDate() + (w * 7));
+                    const weekEnd = new Date(weekStart);
+                    weekEnd.setDate(weekEnd.getDate() + 6);
                     
-                    // Track month positions
-                    if (d.getMonth() !== lastMonth && d.getDay() === 1) {
-                        monthPositions.push({ month: d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(), week: Math.floor(i / 7) });
-                        lastMonth = d.getMonth();
+                    // Count workouts this week
+                    let weekWorkouts = 0;
+                    for (let d = 0; d < 7; d++) {
+                        const checkDate = new Date(weekStart);
+                        checkDate.setDate(checkDate.getDate() + d);
+                        const dateStr = checkDate.toISOString().split('T')[0];
+                        if (workoutDates.has(dateStr)) weekWorkouts++;
                     }
                     
-                    let level = '';
-                    if (d > new Date()) {
-                        level = 'empty';
-                    } else if (workoutDates.has(dateStr)) {
-                        const workout = workouts.find(w => w.date === dateStr);
-                        if (workout) {
-                            let vol = 0;
-                            workout.exercises.forEach(ex => ex.sets.forEach(s => vol += (s.weight || 0) * s.reps));
-                            level = vol > 10000 ? 'level-3' : vol > 5000 ? 'level-2' : 'level-1';
+                    const isCurrentWeek = weekStart.getTime() === currentWeekStart.getTime();
+                    const isFutureWeek = weekStart > today;
+                    const isPastWeek = weekEnd < today && !isCurrentWeek;
+                    
+                    weeksData.push({ weekStart, weekEnd, weekWorkouts, isCurrentWeek, isFutureWeek, isPastWeek });
+                    
+                    // Stats (only for completed weeks)
+                    if (isPastWeek) {
+                        totalSlotsTracked += 3;
+                        totalWorkoutsTracked += Math.min(weekWorkouts, 3);
+                        if (weekWorkouts >= 3) perfectWeeks++;
+                    }
+                }
+                
+                // Calculate streak (from most recent completed week backwards)
+                for (let i = weeksData.length - 1; i >= 0; i--) {
+                    const week = weeksData[i];
+                    if (week.isFutureWeek) continue;
+                    if (week.isCurrentWeek) continue; // Don't count current week in streak
+                    if (!streakBroken && week.weekWorkouts >= 3) {
+                        currentStreak++;
+                    } else if (week.isPastWeek) {
+                        streakBroken = true;
+                    }
+                }
+                
+                // Render weeks
+                weeksData.forEach((week, w) => {
+                    const { weekStart, weekWorkouts, isCurrentWeek, isFutureWeek } = week;
+                    
+                    // Week label (show month on first week of month)
+                    const weekLabel = weekStart.getDate() <= 7 ? 
+                        weekStart.toLocaleDateString('en-US', { month: 'short' }).toUpperCase() : 
+                        '';
+                    
+                    const isPerfect = weekWorkouts >= 3;
+                    const columnClass = `week-column${isCurrentWeek ? ' current' : ''}${isPerfect ? ' perfect' : ''}`;
+                    
+                    let slots = '';
+                    for (let s = 0; s < 3; s++) {
+                        if (isFutureWeek) {
+                            slots += '<div class="week-slot"></div>';
+                        } else {
+                            const filled = s < weekWorkouts;
+                            slots += `<div class="week-slot${filled ? ' filled' : ''}"></div>`;
                         }
                     }
                     
-                    const dayName = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                    calendarGrid.innerHTML += `<div class="calendar-day ${level}" title="${dayName}"></div>`;
-                }
+                    const weekTitle = `Week of ${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}: ${weekWorkouts}/3`;
+                    
+                    weekGrid.innerHTML += `
+                        <div class="${columnClass}" title="${weekTitle}">
+                            ${slots}
+                            <div class="week-label">${weekLabel}</div>
+                        </div>`;
+                });
                 
-                // Render month labels
-                const totalWeeks = Math.ceil(totalDays / 7);
-                calendarMonths.innerHTML = monthPositions.map(m => 
-                    `<span style="position:absolute;left:${(m.week / totalWeeks) * 100}%">${m.month}</span>`
-                ).join('');
-                calendarMonths.style.position = 'relative';
-                calendarMonths.style.height = '15px';
+                // Update stats
+                document.getElementById('perfect-weeks').textContent = perfectWeeks;
+                document.getElementById('hit-rate').textContent = totalSlotsTracked > 0 ? 
+                    Math.round((totalWorkoutsTracked / totalSlotsTracked) * 100) + '%' : '--';
+                document.getElementById('week-streak').textContent = currentStreak + ' wks';
 
                 // Workout Log
                 const workoutLog = document.getElementById('workout-log');
