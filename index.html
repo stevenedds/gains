@@ -358,7 +358,7 @@
         <section class="pr-section">
             <div class="section-header">
                 <h2>Personal Records</h2>
-                <span class="tag">Current Max</span>
+                <span class="tag">Last 60 Days</span>
             </div>
             <div class="pr-grid" id="pr-grid"></div>
         </section>
@@ -550,21 +550,33 @@
                     'incline_chest_press': 'Incline'
                 };
 
-                // PR Grid
+                // PR Grid - only show PRs from last 60 days
                 const prGrid = document.getElementById('pr-grid');
-                Object.entries(prs).forEach(([id, pr]) => {
-                    const prDate = new Date(pr.date + 'T12:00:00');
-                    const days = Math.floor((today - prDate) / (1000 * 60 * 60 * 24));
-                    const dateStr = prDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                const PR_DAYS_CUTOFF = 60;
+                
+                const recentPRs = Object.entries(prs)
+                    .map(([id, pr]) => {
+                        const prDate = new Date(pr.date + 'T12:00:00');
+                        const days = Math.floor((today - prDate) / (1000 * 60 * 60 * 24));
+                        return { id, pr, prDate, days };
+                    })
+                    .filter(p => p.days <= PR_DAYS_CUTOFF)
+                    .sort((a, b) => a.days - b.days); // Most recent first
+                
+                recentPRs.forEach(({ id, pr, prDate, days }) => {
+                    const dateStr = prDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                     let daysClass = days < 14 ? 'recent' : days < 45 ? 'stale' : 'old';
                     prGrid.innerHTML += `
                         <div class="pr-card">
                             <div class="pr-exercise">${prNames[id] || id}</div>
                             <div class="pr-weight">${pr.weight} <span>× ${pr.reps}</span></div>
-                            <div class="pr-meta">Set: ${dateStr}</div>
-                            <div class="pr-days ${daysClass}">${days} days ago</div>
+                            <div class="pr-meta">${dateStr}</div>
+                            <div class="pr-days ${daysClass}">${days === 0 ? 'Today' : days === 1 ? 'Yesterday' : days + ' days ago'}</div>
                         </div>`;
                 });
+                
+                // Update PR count in header
+                document.getElementById('total-prs').textContent = recentPRs.length;
 
                 // Exercise data extraction
                 function getExerciseData(exerciseId) {
