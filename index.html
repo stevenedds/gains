@@ -175,17 +175,14 @@
         .calendar-section { margin-bottom: 50px; }
         .calendar-container { background: var(--steel); border: 3px solid var(--concrete); padding: 20px; overflow: hidden; }
         .week-grid { 
-            display: flex; 
-            gap: 8px; 
-            align-items: flex-end; 
-            justify-content: space-between;
-            padding: 10px 0; 
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 6px;
         }
-        .week-column { display: flex; flex-direction: column; gap: 4px; align-items: center; flex: 1; min-width: 0; }
-        .week-column .week-label { font-size: 0.55rem; color: var(--text-dim); margin-top: 8px; white-space: nowrap; font-weight: 700; letter-spacing: 0.05em; }
+        .week-column { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+        .week-column .week-label { font-size: 0.55rem; color: var(--text-dim); margin-top: 6px; white-space: nowrap; font-weight: 700; letter-spacing: 0.05em; height: 14px; }
         .week-slot {
             width: 100%;
-            max-width: 32px;
             aspect-ratio: 1;
             background: var(--bg-dark);
             border: 2px solid var(--concrete);
@@ -205,11 +202,13 @@
         .consistency-stat .value { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--acid-green); }
         
         @media (max-width: 600px) {
-            .week-grid { gap: 4px; }
-            .week-slot { max-width: 24px; border-width: 1.5px; }
-            .week-column .week-label { font-size: 0.5rem; }
+            .calendar-container { padding: 12px; }
+            .week-grid { gap: 3px; }
+            .week-slot { border-width: 1.5px; }
+            .week-column .week-label { font-size: 0.45rem; margin-top: 4px; }
             .consistency-stats { gap: 15px; }
-            .consistency-stat .value { font-size: 1.5rem; }
+            .consistency-stat .value { font-size: 1.4rem; }
+            .consistency-stat .label { font-size: 0.55rem; }
         }
 
         /* Week Comparison */
