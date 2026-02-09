@@ -173,13 +173,20 @@
 
         /* Week Columns Consistency */
         .calendar-section { margin-bottom: 50px; }
-        .calendar-container { background: var(--steel); border: 3px solid var(--concrete); padding: 20px; }
-        .week-grid { display: flex; gap: 6px; align-items: flex-end; justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; padding: 10px 0; }
-        .week-column { display: flex; flex-direction: column; gap: 4px; align-items: center; flex-shrink: 0; }
-        .week-column .week-label { font-size: 0.6rem; color: var(--text-dim); margin-top: 8px; white-space: nowrap; font-weight: 700; }
+        .calendar-container { background: var(--steel); border: 3px solid var(--concrete); padding: 20px; overflow: hidden; }
+        .week-grid { 
+            display: flex; 
+            gap: 8px; 
+            align-items: flex-end; 
+            justify-content: space-between;
+            padding: 10px 0; 
+        }
+        .week-column { display: flex; flex-direction: column; gap: 4px; align-items: center; flex: 1; min-width: 0; }
+        .week-column .week-label { font-size: 0.55rem; color: var(--text-dim); margin-top: 8px; white-space: nowrap; font-weight: 700; letter-spacing: 0.05em; }
         .week-slot {
-            width: 20px;
-            height: 20px;
+            width: 100%;
+            max-width: 32px;
+            aspect-ratio: 1;
             background: var(--bg-dark);
             border: 2px solid var(--concrete);
             border-radius: 3px;
@@ -192,16 +199,17 @@
         .calendar-legend { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 15px; }
         .calendar-legend span { font-size: 0.65rem; color: var(--text-dim); }
         .calendar-legend .box { width: 14px; height: 14px; border-radius: 2px; border: 2px solid; }
-        .consistency-stats { display: flex; gap: 30px; margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--concrete); flex-wrap: wrap; }
+        .consistency-stats { display: flex; gap: 30px; margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--concrete); }
         .consistency-stat { }
         .consistency-stat .label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; }
         .consistency-stat .value { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--acid-green); }
         
         @media (max-width: 600px) {
-            .week-grid { gap: 8px; justify-content: center; flex-wrap: wrap; }
-            .week-slot { width: 28px; height: 28px; }
-            .week-column .week-label { font-size: 0.7rem; }
-            .consistency-stats { gap: 20px; }
+            .week-grid { gap: 4px; }
+            .week-slot { max-width: 24px; border-width: 1.5px; }
+            .week-column .week-label { font-size: 0.5rem; }
+            .consistency-stats { gap: 15px; }
+            .consistency-stat .value { font-size: 1.5rem; }
         }
 
         /* Week Comparison */
