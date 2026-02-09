@@ -363,11 +363,11 @@
             <div class="pr-grid" id="pr-grid"></div>
         </section>
 
-        <!-- Weight Progression Charts -->
+        <!-- Volume Progression Charts -->
         <section class="chart-section">
             <div class="section-header">
-                <h2>Weight Progression</h2>
-                <span class="tag">Strength Gains</span>
+                <h2>Volume Progression</h2>
+                <span class="tag">First 2 Sets</span>
             </div>
             <div class="chart-grid">
                 <div class="chart-container" data-label="PULL_STRENGTH.DAT">
@@ -599,14 +599,17 @@
                     workouts.slice().reverse().forEach(w => {
                         const ex = w.exercises.find(e => e.id === exerciseId);
                         if (ex) {
+                            // Calculate volume from first 2 working sets
+                            const workingSets = ex.sets.slice(0, 2);
+                            const volume = workingSets.reduce((sum, s) => sum + (s.weight || 0) * s.reps, 0);
                             const topSet = ex.sets.reduce((best, s) => s.weight > (best.weight || 0) ? s : best, ex.sets[0]);
-                            points.push({ date: w.date, weight: topSet.weight, reps: topSet.reps });
+                            points.push({ date: w.date, volume: volume, weight: topSet.weight, reps: topSet.reps });
                         }
                     });
                     return points;
                 }
 
-                // Weight progression charts
+                // Weight progression charts - showing volume (first 2 sets)
                 function createWeightChart(canvasId, exerciseId, color) {
                     const data = getExerciseData(exerciseId);
                     if (data.length === 0) return;
@@ -615,7 +618,7 @@
                         data: {
                             labels: data.map(d => { const dt = new Date(d.date + 'T12:00:00'); return dt.toLocaleDateString('en-US', {month:'short', day:'numeric'}); }),
                             datasets: [{
-                                data: data.map(d => d.weight),
+                                data: data.map(d => d.volume),
                                 borderColor: color,
                                 backgroundColor: color + '33',
                                 fill: true,
