@@ -64,10 +64,6 @@
       "name": "Single Arm Shrug",
       "muscle": "unknown"
     },
-    "60_x_almost_8": {
-      "name": "60 x almost 8",
-      "muscle": "unknown"
-    },
     "cable_bar_tricep_extension": {
       "name": "Cable bar tricep extension",
       "muscle": "unknown"
@@ -130,10 +126,6 @@
     },
     "jeff_nipard_cable_curls": {
       "name": "Jeff Nipard Cable Curls",
-      "muscle": "unknown"
-    },
-    "15_power_mode_x_10": {
-      "name": "15 power mode x 10",
       "muscle": "unknown"
     },
     "romanian_deadlifts": {
@@ -260,11 +252,6 @@
       "reps": 12,
       "date": "2025-09-26"
     },
-    "15_power_mode_x_10": {
-      "weight": 15.0,
-      "reps": 12,
-      "date": "2025-09-19"
-    },
     "seated_db_press": {
       "weight": 75.0,
       "reps": 10,
@@ -364,11 +351,6 @@
       "weight": 20.0,
       "reps": 5,
       "date": "2025-12-31"
-    },
-    "60_x_almost_8": {
-      "weight": 50.0,
-      "reps": 8,
-      "date": "2026-01-26"
     }
   },
   "workouts": [
@@ -719,9 +701,13 @@
       "day": "Monday",
       "exercises": [
         {
-          "id": "60_x_almost_8",
-          "name": "60 x almost 8",
+          "id": "weighted_pull_ups",
+          "name": "Weighted Pull-ups",
           "sets": [
+            {
+              "weight": 60.0,
+              "reps": 8
+            },
             {
               "weight": 50.0,
               "reps": 8
@@ -3835,13 +3821,15 @@
             {
               "weight": 15.0,
               "reps": 12
-            }
-          ]
-        },
-        {
-          "id": "15_power_mode_x_10",
-          "name": "15 power mode x 10",
-          "sets": [
+            },
+            {
+              "weight": 15.0,
+              "reps": 12
+            },
+            {
+              "weight": 15.0,
+              "reps": 10
+            },
             {
               "weight": 10.0,
               "reps": 12
@@ -4181,13 +4169,15 @@
             {
               "weight": 15.0,
               "reps": 12
-            }
-          ]
-        },
-        {
-          "id": "15_power_mode_x_10",
-          "name": "15 power mode x 10",
-          "sets": [
+            },
+            {
+              "weight": 15.0,
+              "reps": 12
+            },
+            {
+              "weight": 15.0,
+              "reps": 10
+            },
             {
               "weight": 10.0,
               "reps": 12
@@ -4531,13 +4521,15 @@
             {
               "weight": 15.0,
               "reps": 12
-            }
-          ]
-        },
-        {
-          "id": "15_power_mode_x_10",
-          "name": "15 power mode x 10",
-          "sets": [
+            },
+            {
+              "weight": 15.0,
+              "reps": 12
+            },
+            {
+              "weight": 15.0,
+              "reps": 10
+            },
             {
               "weight": 10.0,
               "reps": 12
@@ -4881,13 +4873,15 @@
             {
               "weight": 15.0,
               "reps": 12
-            }
-          ]
-        },
-        {
-          "id": "15_power_mode_x_10",
-          "name": "15 power mode x 10",
-          "sets": [
+            },
+            {
+              "weight": 15.0,
+              "reps": 12
+            },
+            {
+              "weight": 15.0,
+              "reps": 10
+            },
             {
               "weight": 10.0,
               "reps": 12
@@ -5231,13 +5225,15 @@
             {
               "weight": 15.0,
               "reps": 12
-            }
-          ]
-        },
-        {
-          "id": "15_power_mode_x_10",
-          "name": "15 power mode x 10",
-          "sets": [
+            },
+            {
+              "weight": 15.0,
+              "reps": 12
+            },
+            {
+              "weight": 15.0,
+              "reps": 10
+            },
             {
               "weight": 10.0,
               "reps": 12
@@ -5577,13 +5573,15 @@
             {
               "weight": 15.0,
               "reps": 12
-            }
-          ]
-        },
-        {
-          "id": "15_power_mode_x_10",
-          "name": "15 power mode x 10",
-          "sets": [
+            },
+            {
+              "weight": 15.0,
+              "reps": 12
+            },
+            {
+              "weight": 15.0,
+              "reps": 10
+            },
             {
               "weight": 10.0,
               "reps": 12
@@ -5919,13 +5917,15 @@
             {
               "weight": 20.0,
               "reps": 6
-            }
-          ]
-        },
-        {
-          "id": "15_power_mode_x_10",
-          "name": "15 power mode x 10",
-          "sets": [
+            },
+            {
+              "weight": 15.0,
+              "reps": 10
+            },
+            {
+              "weight": 15.0,
+              "reps": 10
+            },
             {
               "weight": 15.0,
               "reps": 12
@@ -6261,13 +6261,15 @@
             {
               "weight": 20.0,
               "reps": 4
-            }
-          ]
-        },
-        {
-          "id": "15_power_mode_x_10",
-          "name": "15 power mode x 10",
-          "sets": [
+            },
+            {
+              "weight": 15.0,
+              "reps": 10
+            },
+            {
+              "weight": 15.0,
+              "reps": 10
+            },
             {
               "weight": 15.0,
               "reps": 12
