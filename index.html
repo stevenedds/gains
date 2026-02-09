@@ -545,9 +545,24 @@
 
                 // Names
                 const prNames = {
-                    'weighted_pullups': 'Pull-ups', 'techno_lat_pull': 'Lat Pull', 'seated_db_press': 'DB Press',
-                    'bulgarian_split_squat': 'BSS', 'neck_curls': 'Neck', 'overhead_tricep_ext': 'Triceps',
-                    'incline_chest_press': 'Incline'
+                    'weighted_pull_ups': 'Pull-ups', 
+                    'techno_gym_lat_pull': 'Lat Pull', 
+                    'seated_dumbbell_press': 'DB Press',
+                    'seated_db_press': 'DB Press',
+                    'bulgarian_split_squat': 'BSS', 
+                    'neck_curls': 'Neck', 
+                    'reverse_neck_curls': 'Rev Neck',
+                    'overhead_cable_tricep_extensions': 'Triceps',
+                    'incline_chest_press': 'Incline',
+                    'techno_gym_machine_chest_press_press': 'Chest Press',
+                    'seated_incline_delt_raises': 'Delt Raises',
+                    'db_shrugs': 'Shrugs',
+                    'single_arm_shrug': 'Shrugs',
+                    'cable_lat_raises': 'Lat Raises',
+                    'reverse_shoulder_cable_flys': 'Rev Flys',
+                    'pistol_squats': 'Pistol Squat',
+                    'parallel_chin_ups': 'Chin-ups',
+                    'seated_incline_bicep_curls': 'Bicep Curls'
                 };
 
                 // PR Grid - only show PRs from last 60 days
@@ -613,9 +628,9 @@
                     });
                 }
 
-                createWeightChart('pullup-chart', 'weighted_pullups', chartColors.green);
-                createWeightChart('lat-chart', 'techno_lat_pull', chartColors.rust);
-                createWeightChart('press-chart', 'seated_db_press', chartColors.cyan);
+                createWeightChart('pullup-chart', 'weighted_pull_ups', chartColors.green);
+                createWeightChart('lat-chart', 'techno_gym_lat_pull', chartColors.rust);
+                createWeightChart('press-chart', 'seated_dumbbell_press', chartColors.cyan);
                 createWeightChart('bss-chart', 'bulgarian_split_squat', chartColors.yellow);
 
                 // Volume per workout
@@ -673,10 +688,26 @@
                 // Muscle group volume
                 const muscleVolume = { Back: 0, Chest: 0, Shoulders: 0, Triceps: 0, Legs: 0, Neck: 0 };
                 const muscleMap = {
-                    'weighted_pullups': 'Back', 'techno_lat_pull': 'Back',
-                    'incline_chest_press': 'Chest', 'seated_db_press': 'Shoulders',
-                    'overhead_tricep_ext': 'Triceps', 'bulgarian_split_squat': 'Legs',
-                    'pistol_squat': 'Legs', 'neck_curls': 'Neck'
+                    'weighted_pull_ups': 'Back', 
+                    'techno_gym_lat_pull': 'Back',
+                    'parallel_chin_ups': 'Back',
+                    'incline_chest_press': 'Chest', 
+                    'techno_gym_machine_chest_press_press': 'Chest',
+                    'seated_dumbbell_press': 'Shoulders',
+                    'seated_db_press': 'Shoulders',
+                    'seated_incline_delt_raises': 'Shoulders',
+                    'cable_lat_raises': 'Shoulders',
+                    'reverse_shoulder_cable_flys': 'Shoulders',
+                    'overhead_cable_tricep_extensions': 'Triceps', 
+                    'seated_tricep_extension': 'Triceps',
+                    'cable_bar_tricep_extension': 'Triceps',
+                    'bulgarian_split_squat': 'Legs',
+                    'pistol_squats': 'Legs', 
+                    'technogym_leg_extensions': 'Legs',
+                    'technogym_leg_curls': 'Legs',
+                    'romanian_deadlifts': 'Legs',
+                    'neck_curls': 'Neck',
+                    'reverse_neck_curls': 'Neck'
                 };
                 workouts.forEach(w => {
                     w.exercises.forEach(ex => {
