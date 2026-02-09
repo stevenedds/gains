@@ -230,22 +230,36 @@
 
         /* Workout Log */
         .workouts-section { margin-bottom: 50px; }
-        .workout-log { background: var(--bg-dark); border: 3px solid var(--concrete); max-height: 400px; overflow-y: auto; }
+        .workout-log { background: var(--bg-dark); border: 3px solid var(--concrete); max-height: 600px; overflow-y: auto; }
         .workout-entry {
-            display: grid; grid-template-columns: 100px 1fr auto;
-            gap: 20px; padding: 20px; border-bottom: 2px solid var(--steel); align-items: center;
+            display: grid; grid-template-columns: 90px 1fr auto;
+            gap: 15px; padding: 20px; border-bottom: 2px solid var(--steel); align-items: start;
             transition: background 0.1s;
         }
         .workout-entry:hover { background: var(--steel); }
         .workout-entry:last-child { border-bottom: none; }
-        .workout-date { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--rust); }
-        .workout-date span { display: block; font-size: 0.7rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
-        .workout-detail h4 { font-family: 'Anton', sans-serif; font-size: 1.2rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
-        .workout-detail p { font-size: 0.75rem; color: var(--text-dim); }
+        .workout-date { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--rust); }
+        .workout-date span { display: block; font-size: 0.65rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+        .workout-detail h4 { font-family: 'Anton', sans-serif; font-size: 1.1rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
         .workout-detail .pr-badge { display: inline-block; background: var(--acid-green); color: var(--bg-black); padding: 2px 8px; font-size: 0.6rem; font-weight: 700; margin-left: 8px; }
+        .exercise-list { list-style: none; }
+        .exercise-item { margin-bottom: 8px; }
+        .exercise-name { font-size: 0.75rem; color: var(--text-white); font-weight: 700; text-transform: uppercase; }
+        .exercise-name.has-pr { color: var(--acid-green); }
+        .exercise-name .pr-icon { font-size: 0.65rem; margin-left: 4px; }
+        .exercise-sets { font-size: 0.7rem; color: var(--text-dim); margin-top: 2px; }
         .workout-volume { text-align: right; }
-        .workout-volume .number { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--acid-green); }
-        .workout-volume .label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; }
+        .workout-volume .number { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--acid-green); }
+        .workout-volume .label { font-size: 0.55rem; color: var(--text-dim); text-transform: uppercase; }
+        
+        @media (max-width: 600px) {
+            .workout-entry { grid-template-columns: 70px 1fr auto; gap: 10px; padding: 15px; }
+            .workout-date { font-size: 1.2rem; }
+            .workout-detail h4 { font-size: 1rem; margin-bottom: 8px; }
+            .exercise-name { font-size: 0.7rem; }
+            .exercise-sets { font-size: 0.65rem; }
+            .workout-volume .number { font-size: 1.3rem; }
+        }
 
         /* Motivation Block */
         .motivation-block {
@@ -270,10 +284,7 @@
         }
         @media (max-width: 600px) {
             .pr-grid, .days-grid { grid-template-columns: 1fr; }
-            .workout-entry { grid-template-columns: 1fr; gap: 10px; }
-            .workout-volume { text-align: left; }
             .motivation-quote { font-size: 1.8rem; }
-            .calendar-grid { overflow-x: auto; }
         }
 
         @keyframes glitch {
@@ -828,27 +839,79 @@
                 const workoutLog = document.getElementById('workout-log');
                 const dayLabels = { 'Monday': 'Pull + Chest', 'Wednesday': 'Legs + Access', 'Friday': 'Shoulders + Back' };
                 
+                // Friendly exercise names
+                const exerciseNames = {
+                    'weighted_pullups': 'Weighted Pull-ups',
+                    'weighted_pull_ups': 'Weighted Pull-ups',
+                    'techno_lat_pull': 'Lat Pull',
+                    'techno_gym_lat_pull': 'Lat Pull',
+                    'seated_db_press': 'DB Press',
+                    'seated_dumbbell_press': 'DB Press',
+                    'bulgarian_split_squat': 'Bulgarian Split Squat',
+                    'overhead_tricep_ext': 'Tricep Extensions',
+                    'overhead_cable_tricep_extensions': 'Tricep Extensions',
+                    'incline_chest_press': 'Incline Press',
+                    'techno_gym_machine_chest_press_press': 'Machine Chest Press',
+                    'techno_gym_machine_chest_press': 'Machine Chest Press',
+                    'seated_incline_bicep_curls': 'Bicep Curls',
+                    'seated_incline_delt_raises': 'Delt Raises',
+                    'incline_delt_raises': 'Delt Raises',
+                    'neck_curls': 'Neck Curls',
+                    'reverse_neck_curls': 'Reverse Neck Curls',
+                    'db_shrugs': 'DB Shrugs',
+                    'single_arm_shrug': 'Single Arm Shrug',
+                    'cable_lat_raises': 'Cable Lat Raises',
+                    'reverse_shoulder_cable_flys': 'Reverse Cable Flys',
+                    'reverse_shoulder_flys': 'Reverse Cable Flys',
+                    'pistol_squat': 'Pistol Squats',
+                    'pistol_squats': 'Pistol Squats',
+                    'cable_bar_tricep_extension': 'Cable Tricep Ext',
+                    'seated_tricep_extension': 'Seated Tricep Ext',
+                    'romanian_deadlifts': 'Romanian Deadlifts',
+                    'parallel_chin_ups': 'Chin-ups',
+                    'cable_face_pulls': 'Face Pulls',
+                    'seated_arnold_press': 'Arnold Press',
+                    'narrow_grip_incline_dumbbell_press': 'Incline DB Press',
+                    'jeff_nipard_cable_curls': 'Cable Curls',
+                    'one_arm_dumbbell_rows': 'DB Rows',
+                    'smith_machine_overhead_press': 'Smith Press',
+                    'seated_smith_machine_press': 'Smith Press',
+                    'machine_leg_extensions': 'Leg Extensions',
+                    'technogym_leg_extensions': 'Leg Extensions',
+                    'machine_leg_curls': 'Leg Curls',
+                    'technogym_leg_curls': 'Leg Curls',
+                    'dumbbell_rdls': 'DB RDLs',
+                    'prone_leg_curls': 'Prone Leg Curls',
+                    'leg_extensions': 'Leg Extensions'
+                };
+                
                 workouts.forEach(w => {
                     const date = new Date(w.date + 'T12:00:00');
                     const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
                     
                     let vol = 0;
-                    let exerciseList = [];
                     let hasPR = false;
                     
+                    // Build exercise HTML with all sets
+                    let exerciseHTML = '';
                     w.exercises.forEach(ex => {
-                        const name = prNames[ex.id] || ex.id;
-                        const topSet = ex.sets.reduce((best, s) => (s.weight > (best.weight || 0)) ? s : best, ex.sets[0]);
-                        const setStr = topSet.weight === 0 ? `${name} BW×${topSet.reps}` : `${name} ${topSet.weight}×${topSet.reps}`;
+                        const name = exerciseNames[ex.id] || ex.name || ex.id.replace(/_/g, ' ');
+                        const isPR = prs[ex.id] && prs[ex.id].date === w.date;
+                        if (isPR) hasPR = true;
                         
-                        const pr = prs[ex.id];
-                        if (pr && pr.date === w.date) {
-                            hasPR = true;
-                            exerciseList.push(setStr + ' 🏆');
-                        } else {
-                            exerciseList.push(setStr);
-                        }
+                        // Format all sets
+                        const setsStr = ex.sets.map(s => {
+                            if (s.weight === 0) return `BW×${s.reps}`;
+                            return `${s.weight}×${s.reps}`;
+                        }).join(', ');
+                        
                         ex.sets.forEach(s => vol += (s.weight || 0) * s.reps);
+                        
+                        exerciseHTML += `
+                            <li class="exercise-item">
+                                <div class="exercise-name${isPR ? ' has-pr' : ''}">${name}${isPR ? '<span class="pr-icon">🏆</span>' : ''}</div>
+                                <div class="exercise-sets">${setsStr}</div>
+                            </li>`;
                     });
                     
                     workoutLog.innerHTML += `
@@ -856,7 +919,7 @@
                             <div class="workout-date">${monthDay}<span>${w.day}</span></div>
                             <div class="workout-detail">
                                 <h4>${dayLabels[w.day] || w.day}${hasPR ? '<span class="pr-badge">PR</span>' : ''}</h4>
-                                <p>${exerciseList.join(' • ')}</p>
+                                <ul class="exercise-list">${exerciseHTML}</ul>
                             </div>
                             <div class="workout-volume">
                                 <div class="number">${vol.toLocaleString()}</div>
