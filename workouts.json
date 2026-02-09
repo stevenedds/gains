@@ -293,9 +293,9 @@
       "date": "2025-11-17"
     },
     "seated_incline_bicep_curls": {
-      "weight": 45.0,
-      "reps": 10,
-      "date": "2025-11-17"
+      "weight": 50,
+      "reps": 8,
+      "date": "2026-02-09"
     },
     "seated_tricep_extension": {
       "weight": 35.0,
@@ -351,9 +351,130 @@
       "weight": 20.0,
       "reps": 5,
       "date": "2025-12-31"
+    },
+    "techno_gym_machine_chest_press": {
+      "weight": 205,
+      "reps": 8,
+      "date": "2026-02-09"
     }
   },
   "workouts": [
+    {
+      "date": "2026-02-09",
+      "day": "Monday",
+      "exercises": [
+        {
+          "id": "weighted_pull_ups",
+          "name": "Weighted Pull-ups",
+          "sets": [
+            {
+              "weight": 65,
+              "reps": 7
+            },
+            {
+              "weight": 50,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "id": "incline_chest_press",
+          "name": "Incline chest press",
+          "sets": [
+            {
+              "weight": 75,
+              "reps": 8
+            },
+            {
+              "weight": 70,
+              "reps": 10
+            }
+          ]
+        },
+        {
+          "id": "techno_gym_machine_chest_press",
+          "name": "Techno gym machine chest press",
+          "sets": [
+            {
+              "weight": 205,
+              "reps": 8
+            },
+            {
+              "weight": 195,
+              "reps": 10
+            }
+          ]
+        },
+        {
+          "id": "seated_incline_bicep_curls",
+          "name": "Seated Incline Bicep Curls",
+          "sets": [
+            {
+              "weight": 50,
+              "reps": 8
+            },
+            {
+              "weight": 45,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "id": "seated_incline_delt_raises",
+          "name": "Seated incline Delt raises",
+          "sets": [
+            {
+              "weight": 30,
+              "reps": 8
+            },
+            {
+              "weight": 25,
+              "reps": 10
+            },
+            {
+              "weight": 25,
+              "reps": 10
+            }
+          ]
+        },
+        {
+          "id": "neck_curls",
+          "name": "Neck Curls",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            }
+          ]
+        },
+        {
+          "id": "reverse_neck_curls",
+          "name": "Reverse Neck curls",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            }
+          ]
+        }
+      ]
+    },
     {
       "date": "2026-02-06",
       "day": "Friday",
