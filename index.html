@@ -514,7 +514,7 @@
 
                 // Last session
                 if (workouts.length > 0) {
-                    const lastWorkout = workouts[0]; // workouts are sorted newest first
+                    const lastWorkout = workouts[workouts.length - 1]; // last entry = most recent
                     const lastDate = new Date(lastWorkout.date + 'T12:00:00');
                     const lastDateStr = lastDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
                     document.getElementById('last-session').textContent = lastDateStr;
