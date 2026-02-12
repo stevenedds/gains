@@ -508,8 +508,7 @@
                 // Basic stats
                 document.getElementById('total-workouts').textContent = workouts.length;
                 document.getElementById('total-prs').textContent = Object.keys(prs).length;
-                document.getElementById('streak').innerHTML = '22<span class="stat-unit">wks</span>';
-                document.getElementById('start-date').textContent = 'SEP 25';
+                // streak and start-date set dynamically below
                 document.getElementById('workout-count').textContent = workouts.length + ' Sessions';
 
                 // Last session
@@ -564,7 +563,30 @@
                     'reverse_shoulder_cable_flys': 'Rev Flys',
                     'pistol_squats': 'Pistol Squat',
                     'parallel_chin_ups': 'Chin-ups',
-                    'seated_incline_bicep_curls': 'Bicep Curls'
+                    'seated_incline_bicep_curls': 'Bicep Curls',
+                    'cable_face_pulls': 'Face Pulls',
+                    'jeff_nipard_cable_curls': 'Cable Curls',
+                    'one_arm_dumbbell_rows': 'DB Rows',
+                    'seated_arnold_press': 'Arnold Press',
+                    'arnold_press': 'Arnold Press',
+                    'narrow_grip_incline_dumbbell_press': 'Incline DB Press',
+                    'smith_machine_overhead_press': 'Smith OHP',
+                    'seated_smith_machine_press': 'Smith Press',
+                    'machine_leg_extensions': 'Leg Ext',
+                    'technogym_leg_extensions': 'Leg Ext',
+                    'machine_leg_curls': 'Leg Curls',
+                    'technogym_leg_curls': 'Leg Curls',
+                    'cable_lat_raise': 'Lat Raises',
+                    'cable_lateral_raisea': 'Lat Raises',
+                    'cable_lateral_raises': 'Lat Raises',
+                    'dumbbell_rdls_slow_with_great_form': 'DB RDLs',
+                    'prone_leg_curls_at_wolfe': 'Prone Leg Curls',
+                    'pull_ups': 'Pull-ups',
+                    'leg_extensions': 'Leg Ext',
+                    'seated_tricep_extension': 'Tricep Ext',
+                    'cable_bar_tricep_extension': 'Cable Tricep Ext',
+                    'romanian_deadlifts': 'RDLs',
+                    'techno_gym_machine_chest_press': 'Chest Press'
                 };
 
                 // PR Grid - only show PRs from last 60 days
@@ -691,15 +713,24 @@
                 volChangeEl.className = 'change ' + (volChange >= 0 ? 'up' : 'down');
 
                 // Muscle group volume
-                const muscleVolume = { Back: 0, Chest: 0, Shoulders: 0, Triceps: 0, Legs: 0, Neck: 0 };
+                const muscleVolume = { Back: 0, Chest: 0, Shoulders: 0, Triceps: 0, Biceps: 0, Legs: 0, Neck: 0 };
                 const muscleMap = {
                     weighted_pull_ups: 'Back', techno_gym_lat_pull: 'Back', parallel_chin_ups: 'Back',
+                    one_arm_dumbbell_rows: 'Back', pull_ups: 'Back',
                     incline_chest_press: 'Chest', techno_gym_machine_chest_press_press: 'Chest',
+                    techno_gym_machine_chest_press: 'Chest', narrow_grip_incline_dumbbell_press: 'Chest',
                     seated_dumbbell_press: 'Shoulders', seated_db_press: 'Shoulders', seated_incline_delt_raises: 'Shoulders',
                     cable_lat_raises: 'Shoulders', reverse_shoulder_cable_flys: 'Shoulders', cable_lateral_raises: 'Shoulders',
+                    cable_lat_raise: 'Shoulders', cable_lateral_raisea: 'Shoulders', cable_face_pulls: 'Shoulders',
+                    seated_arnold_press: 'Shoulders', arnold_press: 'Shoulders',
+                    smith_machine_overhead_press: 'Shoulders', seated_smith_machine_press: 'Shoulders',
+                    db_shrugs: 'Shoulders', single_arm_shrug: 'Shoulders',
                     overhead_cable_tricep_extensions: 'Triceps', seated_tricep_extension: 'Triceps', cable_bar_tricep_extension: 'Triceps',
+                    seated_incline_bicep_curls: 'Biceps', jeff_nipard_cable_curls: 'Biceps',
                     bulgarian_split_squat: 'Legs', pistol_squats: 'Legs', technogym_leg_extensions: 'Legs',
                     technogym_leg_curls: 'Legs', romanian_deadlifts: 'Legs',
+                    machine_leg_extensions: 'Legs', machine_leg_curls: 'Legs', leg_extensions: 'Legs',
+                    dumbbell_rdls_slow_with_great_form: 'Legs', prone_leg_curls_at_wolfe: 'Legs',
                     neck_curls: 'Neck', reverse_neck_curls: 'Neck'
                 };
                 workouts.forEach(w => {
@@ -711,7 +742,7 @@
                     });
                 });
 
-                const muscleColors = { Back: chartColors.green, Chest: chartColors.rust, Shoulders: chartColors.cyan, Triceps: chartColors.purple, Legs: chartColors.yellow, Neck: '#ff6b6b' };
+                const muscleColors = { Back: chartColors.green, Chest: chartColors.rust, Shoulders: chartColors.cyan, Triceps: chartColors.purple, Biceps: '#ff8c00', Legs: chartColors.yellow, Neck: '#ff6b6b' };
                 
                 // Pie chart for muscle distribution
                 const muscleLabels = Object.keys(muscleVolume);
@@ -871,6 +902,49 @@
                     Math.round((totalWorkoutsTracked / totalSlotsTracked) * 100) + '%' : '--';
                 document.getElementById('week-streak').textContent = currentStreak + ' wks';
 
+                // Dynamic week streak in stats header (count consecutive weeks with >=1 workout going back from current)
+                {
+                    let headerStreak = 0;
+                    let broken = false;
+                    for (let i = weeksData.length - 1; i >= 0; i--) {
+                        const week = weeksData[i];
+                        if (week.isFutureWeek || week.isCurrentWeek) continue;
+                        if (!broken && week.weekWorkouts >= 1) {
+                            headerStreak++;
+                        } else {
+                            broken = true;
+                        }
+                    }
+                    // Also check weeks before the 12-week window
+                    if (!broken) {
+                        // Keep counting backwards through all workouts
+                        let checkWeek = new Date(startDate);
+                        checkWeek.setDate(checkWeek.getDate() - 7);
+                        while (true) {
+                            let wkCount = 0;
+                            for (let d = 0; d < 7; d++) {
+                                const cd = new Date(checkWeek);
+                                cd.setDate(cd.getDate() + d);
+                                if (workoutDates.has(cd.toISOString().split('T')[0])) wkCount++;
+                            }
+                            if (wkCount >= 1) {
+                                headerStreak++;
+                                checkWeek.setDate(checkWeek.getDate() - 7);
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    document.getElementById('streak').innerHTML = headerStreak + '<span class="stat-unit">wks</span>';
+                }
+
+                // Dynamic "Training Since" from earliest workout
+                {
+                    const earliest = new Date(workouts[0].date + 'T12:00:00');
+                    const monthStr = earliest.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
+                    document.getElementById('start-date').textContent = monthStr;
+                }
+
                 // Workout Log
                 const workoutLog = document.getElementById('workout-log');
                 const dayLabels = { 'Monday': 'Pull + Chest', 'Wednesday': 'Legs + Access', 'Friday': 'Shoulders + Back' };
@@ -918,10 +992,18 @@
                     'technogym_leg_curls': 'Leg Curls',
                     'dumbbell_rdls': 'DB RDLs',
                     'prone_leg_curls': 'Prone Leg Curls',
-                    'leg_extensions': 'Leg Extensions'
+                    'leg_extensions': 'Leg Extensions',
+                    'arnold_press': 'Arnold Press',
+                    'cable_lat_raise': 'Cable Lat Raises',
+                    'cable_lateral_raisea': 'Cable Lat Raises',
+                    'cable_lateral_raises': 'Cable Lat Raises',
+                    'dumbbell_rdls_slow_with_great_form': 'DB RDLs (Slow)',
+                    'prone_leg_curls_at_wolfe': 'Prone Leg Curls',
+                    'pull_ups': 'Pull-ups',
+                    'techno_gym_machine_chest_press': 'Machine Chest Press'
                 };
                 
-                workouts.forEach(w => {
+                workouts.slice().reverse().forEach(w => {
                     const date = new Date(w.date + 'T12:00:00');
                     const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
                     
