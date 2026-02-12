@@ -620,7 +620,7 @@
                 // Exercise data extraction
                 function getExerciseData(exerciseId) {
                     const points = [];
-                    workouts.slice().reverse().forEach(w => {
+                    workouts.forEach(w => {
                         const ex = w.exercises.find(e => e.id === exerciseId);
                         if (ex) {
                             // Calculate volume from first 2 working sets
@@ -661,7 +661,7 @@
                 createWeightChart('bss-chart', 'bulgarian_split_squat', chartColors.yellow);
 
                 // Volume per workout
-                const volumeData = workouts.slice().reverse().map(w => {
+                const volumeData = workouts.map(w => {
                     let vol = 0;
                     w.exercises.forEach(ex => ex.sets.forEach(s => vol += (s.weight || 0) * s.reps));
                     return { date: w.date, volume: vol };
