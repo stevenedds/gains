@@ -159,6 +159,10 @@
     "arnold_press": {
       "name": "Arnold Press",
       "muscle": "unknown"
+    },
+    "techno_gym_machine_chest_press": {
+      "name": "TechnoGym Machine Chest Press",
+      "muscle": "unknown"
     }
   },
   "prs": {
@@ -7272,6 +7276,158 @@
         }
       ],
       "day": "Wednesday"
+    },
+    {
+      "date": "2026-02-13",
+      "exercises": [
+        {
+          "id": "seated_dumbbell_press",
+          "name": "Seated Dumbbell Press",
+          "sets": [
+            {
+              "weight": 75.0,
+              "reps": 12
+            },
+            {
+              "weight": 75.0,
+              "reps": 12
+            }
+          ]
+        },
+        {
+          "id": "seated_incline_delt_raises",
+          "name": "Seated Incline Delt Raises",
+          "sets": [
+            {
+              "weight": 30.0,
+              "reps": 8
+            },
+            {
+              "weight": 30.0,
+              "reps": 6
+            },
+            {
+              "weight": 25.0,
+              "reps": 12
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-02-16",
+      "exercises": [
+        {
+          "id": "weighted_pull_ups",
+          "name": "Weighted Pull-ups",
+          "sets": [
+            {
+              "weight": 65.0,
+              "reps": 7
+            },
+            {
+              "weight": 50.0,
+              "reps": 8
+            }
+          ]
+        },
+        {
+          "id": "incline_chest_press",
+          "name": "Incline Chest Press",
+          "sets": [
+            {
+              "weight": 75.0,
+              "reps": 8
+            },
+            {
+              "weight": 70.0,
+              "reps": 10
+            }
+          ]
+        },
+        {
+          "id": "techno_gym_machine_chest_press",
+          "name": "TechnoGym Machine Chest Press",
+          "sets": [
+            {
+              "weight": 205.0,
+              "reps": 8
+            },
+            {
+              "weight": 195.0,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "id": "seated_incline_bicep_curls",
+          "name": "Seated Incline Bicep Curls",
+          "sets": [
+            {
+              "weight": 50.0,
+              "reps": 8
+            },
+            {
+              "weight": 45.0,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "id": "seated_incline_delt_raises",
+          "name": "Seated Incline Delt Raises",
+          "sets": [
+            {
+              "weight": 30.0,
+              "reps": 8
+            },
+            {
+              "weight": 25.0,
+              "reps": 10
+            },
+            {
+              "weight": 25.0,
+              "reps": 10
+            }
+          ]
+        },
+        {
+          "id": "neck_curls",
+          "name": "Neck Curls",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 20
+            },
+            {
+              "weight": 25.0,
+              "reps": 20
+            },
+            {
+              "weight": 25.0,
+              "reps": 20
+            }
+          ]
+        },
+        {
+          "id": "reverse_neck_curls",
+          "name": "Reverse Neck Curls",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 20
+            },
+            {
+              "weight": 25.0,
+              "reps": 20
+            },
+            {
+              "weight": 25.0,
+              "reps": 20
+            }
+          ]
+        }
+      ]
     }
   ]
 }
