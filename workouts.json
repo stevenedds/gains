@@ -7428,6 +7428,115 @@
           ]
         }
       ]
+    },
+    {
+      "date": "2026-02-18",
+      "day": "Wednesday",
+      "exercises": [
+        {
+          "id": "bulgarian_split_squat",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 12
+            },
+            {
+              "weight": 45,
+              "reps": 12
+            },
+            {
+              "weight": 45,
+              "reps": 12
+            }
+          ]
+        },
+        {
+          "id": "pistol_squats",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 10
+            },
+            {
+              "weight": 0,
+              "reps": 10
+            }
+          ]
+        },
+        {
+          "id": "overhead_tricep_ext",
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 12
+            },
+            {
+              "weight": 80,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "id": "cable_lat_raises",
+          "sets": [
+            {
+              "weight": 20,
+              "reps": 10
+            },
+            {
+              "weight": 20,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "id": "reverse_cable_flys",
+          "sets": [
+            {
+              "weight": 15,
+              "reps": 12
+            },
+            {
+              "weight": 20,
+              "reps": 12
+            },
+            {
+              "weight": 20,
+              "reps": 12
+            }
+          ]
+        },
+        {
+          "id": "single_arm_shrug",
+          "sets": [
+            {
+              "weight": 75,
+              "reps": 15
+            },
+            {
+              "weight": 75,
+              "reps": 15
+            }
+          ]
+        },
+        {
+          "id": "neck_curls",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            }
+          ]
+        }
+      ]
     }
   ]
 }
