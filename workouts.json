@@ -247,9 +247,9 @@
       "date": "2025-09-17"
     },
     "techno_gym_lat_pull": {
-      "weight": 250.0,
-      "reps": 5,
-      "date": "2025-11-14"
+      "weight": 240,
+      "reps": 7,
+      "date": "2026-02-20"
     },
     "seated_arnold_press": {
       "weight": 45.0,
@@ -7533,6 +7533,81 @@
             {
               "weight": 25,
               "reps": 20
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-02-20",
+      "day": "Friday",
+      "exercises": [
+        {
+          "id": "seated_dumbbell_press",
+          "sets": [
+            {
+              "weight": 75,
+              "reps": 12
+            },
+            {
+              "weight": 75,
+              "reps": 12
+            }
+          ]
+        },
+        {
+          "id": "techno_gym_lat_pull",
+          "sets": [
+            {
+              "weight": 240,
+              "reps": 7
+            },
+            {
+              "weight": 225,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "id": "overhead_cable_tricep_extensions",
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 12
+            },
+            {
+              "weight": 80,
+              "reps": 12
+            }
+          ]
+        },
+        {
+          "id": "seated_incline_delt_raises",
+          "sets": [
+            {
+              "weight": 30,
+              "reps": 9
+            },
+            {
+              "weight": 30,
+              "reps": 6
+            },
+            {
+              "weight": 25,
+              "reps": 12
+            }
+          ]
+        },
+        {
+          "id": "db_shrugs",
+          "sets": [
+            {
+              "weight": 75,
+              "reps": 15
+            },
+            {
+              "weight": 75,
+              "reps": 15
             }
           ]
         }
