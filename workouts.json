@@ -163,6 +163,10 @@
     "techno_gym_machine_chest_press": {
       "name": "TechnoGym Machine Chest Press",
       "muscle": "unknown"
+    },
+    "press": {
+      "name": "Press",
+      "muscle": "shoulders"
     }
   },
   "prs": {
@@ -187,14 +191,14 @@
       "date": "2025-09-10"
     },
     "neck_curls": {
-      "weight": 25.0,
-      "reps": 12,
-      "date": "2026-01-14"
+      "weight": 25,
+      "reps": 20,
+      "date": "2026-02-23"
     },
     "reverse_neck_curls": {
-      "weight": 25.0,
-      "reps": 12,
-      "date": "2026-01-14"
+      "weight": 25,
+      "reps": 20,
+      "date": "2026-02-23"
     },
     "smith_machine_overhead_press": {
       "weight": 60.0,
@@ -360,6 +364,11 @@
       "weight": 205,
       "reps": 8,
       "date": "2026-02-09"
+    },
+    "press": {
+      "weight": 205,
+      "reps": 9,
+      "date": "2026-02-23"
     }
   },
   "workouts": [
@@ -7612,6 +7621,133 @@
           ]
         }
       ]
+    },
+    {
+      "date": "2026-02-23",
+      "day": "Monday",
+      "exercises": [
+        {
+          "id": "weighted_pull_ups",
+          "sets": [
+            {
+              "weight": 65,
+              "reps": 7
+            },
+            {
+              "weight": 50,
+              "reps": 8
+            }
+          ],
+          "warmup": [
+            {
+              "weight": 0,
+              "reps": 6
+            },
+            {
+              "weight": 25,
+              "reps": 3
+            },
+            {
+              "weight": 50,
+              "reps": 2
+            }
+          ]
+        },
+        {
+          "id": "incline_chest_press",
+          "sets": [
+            {
+              "weight": 75,
+              "reps": 9
+            },
+            {
+              "weight": 75,
+              "reps": 8
+            }
+          ],
+          "notes": "elbows rotated inward, techno gym machine"
+        },
+        {
+          "id": "press",
+          "sets": [
+            {
+              "weight": 205,
+              "reps": 9
+            },
+            {
+              "weight": 195,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "id": "seated_incline_bicep_curls",
+          "sets": [
+            {
+              "weight": 50,
+              "reps": 8
+            },
+            {
+              "weight": 45,
+              "reps": 10
+            }
+          ],
+          "notes": "bench 60\u00b0"
+        },
+        {
+          "id": "seated_incline_delt_raises",
+          "sets": [
+            {
+              "weight": 30,
+              "reps": 9
+            },
+            {
+              "weight": 25,
+              "reps": 10
+            },
+            {
+              "weight": 25,
+              "reps": 10
+            }
+          ],
+          "notes": "bench 60\u00b0"
+        },
+        {
+          "id": "neck_curls",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            }
+          ]
+        },
+        {
+          "id": "reverse_neck_curls",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            }
+          ]
+        }
+      ]
     }
-  ]
+  ],
+  "total_sessions": 65
 }
