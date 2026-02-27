@@ -186,9 +186,9 @@
       "date": "2025-11-05"
     },
     "reverse_shoulder_cable_flys": {
-      "weight": 20.0,
-      "reps": 10,
-      "date": "2025-09-10"
+      "weight": 20,
+      "reps": 12,
+      "date": "2026-02-25"
     },
     "neck_curls": {
       "weight": 25,
@@ -286,9 +286,9 @@
       "date": "2025-11-26"
     },
     "overhead_cable_tricep_extensions": {
-      "weight": 75.0,
+      "weight": 80,
       "reps": 12,
-      "date": "2026-01-28"
+      "date": "2026-02-25"
     },
     "seated_smith_machine_press": {
       "weight": 62.5,
@@ -356,9 +356,9 @@
       "date": "2026-02-04"
     },
     "cable_lat_raises": {
-      "weight": 20.0,
-      "reps": 5,
-      "date": "2025-12-31"
+      "weight": 20,
+      "reps": 10,
+      "date": "2026-02-25"
     },
     "techno_gym_machine_chest_press": {
       "weight": 205,
@@ -369,6 +369,11 @@
       "weight": 205,
       "reps": 9,
       "date": "2026-02-23"
+    },
+    "pistol_squats": {
+      "weight": 0,
+      "reps": 10,
+      "date": "2026-02-25"
     }
   },
   "workouts": [
@@ -7747,7 +7752,137 @@
           ]
         }
       ]
+    },
+    {
+      "date": "2026-02-25",
+      "day": "Wednesday",
+      "exercises": [
+        {
+          "id": "bulgarian_split_squat",
+          "sets": [
+            {
+              "weight": 45,
+              "reps": 12
+            },
+            {
+              "weight": 45,
+              "reps": 12
+            }
+          ],
+          "warmup": [
+            {
+              "weight": 0,
+              "reps": 12
+            }
+          ]
+        },
+        {
+          "id": "pistol_squats",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 10
+            },
+            {
+              "weight": 0,
+              "reps": 10
+            }
+          ]
+        },
+        {
+          "id": "overhead_cable_tricep_extensions",
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 12
+            },
+            {
+              "weight": 80,
+              "reps": 12
+            }
+          ],
+          "notes": "height 23"
+        },
+        {
+          "id": "cable_lat_raises",
+          "sets": [
+            {
+              "weight": 20,
+              "reps": 10
+            },
+            {
+              "weight": 20,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "id": "reverse_shoulder_cable_flys",
+          "sets": [
+            {
+              "weight": 15,
+              "reps": 12
+            },
+            {
+              "weight": 20,
+              "reps": 12
+            },
+            {
+              "weight": 20,
+              "reps": 12
+            }
+          ],
+          "notes": "height 35"
+        },
+        {
+          "id": "single_arm_shrug",
+          "sets": [
+            {
+              "weight": 75,
+              "reps": 15
+            },
+            {
+              "weight": 75,
+              "reps": 15
+            }
+          ]
+        },
+        {
+          "id": "neck_curls",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            }
+          ]
+        },
+        {
+          "id": "reverse_neck_curls",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            },
+            {
+              "weight": 25,
+              "reps": 20
+            }
+          ]
+        }
+      ]
     }
   ],
-  "total_sessions": 65
+  "total_sessions": 66
 }
