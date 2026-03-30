@@ -167,6 +167,10 @@
     "press": {
       "name": "Press",
       "muscle": "shoulders"
+    },
+    "cuban_dumbbell_press": {
+      "name": "Cuban dumbbell press",
+      "muscle": "shoulders"
     }
   },
   "prs": {
@@ -374,6 +378,11 @@
       "weight": 0,
       "reps": 10,
       "date": "2026-02-25"
+    },
+    "cuban_dumbbell_press": {
+      "weight": 25,
+      "reps": 10,
+      "date": "2026-03-30"
     }
   },
   "workouts": [
@@ -7959,7 +7968,83 @@
           "notes": "both at same time"
         }
       ]
+    },
+    {
+      "date": "2026-03-30",
+      "day": "Monday",
+      "exercises": [
+        {
+          "id": "weighted_pull_ups",
+          "sets": [
+            {
+              "weight": 65,
+              "reps": 7
+            },
+            {
+              "weight": 55,
+              "reps": 8
+            }
+          ],
+          "notes": "8 reps, 10 reps target. WU: BWx6, 25x3, 50x2"
+        },
+        {
+          "id": "incline_chest_press",
+          "sets": [
+            {
+              "weight": 75,
+              "reps": 10
+            },
+            {
+              "weight": 75,
+              "reps": 9
+            }
+          ],
+          "notes": "elbows rotated inward"
+        },
+        {
+          "id": "seated_incline_bicep_curls",
+          "sets": [
+            {
+              "weight": 50,
+              "reps": 8
+            },
+            {
+              "weight": 50,
+              "reps": 7
+            }
+          ],
+          "notes": "bench 60\u00b0"
+        },
+        {
+          "id": "seated_incline_delt_raises",
+          "sets": [
+            {
+              "weight": 30,
+              "reps": 10
+            },
+            {
+              "weight": 30,
+              "reps": 10
+            }
+          ],
+          "notes": "bench 60\u00b0"
+        },
+        {
+          "id": "cuban_dumbbell_press",
+          "sets": [
+            {
+              "weight": 25,
+              "reps": 10
+            },
+            {
+              "weight": 25,
+              "reps": 10
+            }
+          ],
+          "notes": "standing"
+        }
+      ]
     }
   ],
-  "total_sessions": 67
+  "total_sessions": 68
 }
